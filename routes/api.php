@@ -20,6 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 // Auth::routes();
+
+// Route::get('/home', 'HomeController@index')->name('home');
+// Route::resource('examinfo','ExaminfoController');
+// Route::resource('makequestion' , 'QuestionController');
+// Route::resource('student','StudentController');
+// Route::resource('answer','AnswerController');
+// Route::resource('result' , 'ResultController');
+
+// Auth::routes();
 // Route::
 // Route::get('/', function () {
 //     return view('welcome');

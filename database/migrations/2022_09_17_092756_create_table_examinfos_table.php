@@ -15,14 +15,15 @@ class CreateTableExaminfosTable extends Migration
     {
         Schema::create('examinfos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('userId')->unsigned();
+            $table->integer('userID')->unsigned();
             $table->string('course');
-            $table->integer('totalQuestions');
-            $table->string('examUniqueId');
+            $table->integer('total_questions');
+            $table->string('uniqueid');
             $table->string('time');
+
             $table->timestamps();
             
-            $table->foreign('userId')->references('id')->on('users');
+            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
