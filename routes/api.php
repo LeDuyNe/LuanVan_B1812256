@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,19 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::post('login', [UserController::class, 'login']);
+Route::post('register', [UserController::class, 'register']);
+ 
+Route::group(['middleware' => 'auth:api'], function(){
+ Route::post('user-details', [UserController::class, 'userDetails']);
 });
-
-
-// Auth::routes();
-
-// Route::get('/home', 'HomeController@index')->name('home');
-// Route::resource('examinfo','ExaminfoController');
-// Route::resource('makequestion' , 'QuestionController');
-// Route::resource('student','StudentController');
-// Route::resource('answer','AnswerController');
-// Route::resource('result' , 'ResultController');
 
 // Auth::routes();
 // Route::
