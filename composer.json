@@ -10,8 +10,9 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/passport": "*",
-        "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/sanctum": "2.x-dev",
+        "laravel/tinker": "^2.5",
+        "laravel/ui": "3.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

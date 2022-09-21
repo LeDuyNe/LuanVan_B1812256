@@ -16,18 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get("/profile", function(Request $request) { 
-        return auth()->user();
-});
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::controller(AuthController::class)->group(function(){
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::middleware('auth:sanctum')->group( function () {
+    // Route::resource('products', ProductController::class);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 // Route::get('/home', 'HomeController@index')->name('home');
 // Route::resource('examinfo','ExaminfoController');

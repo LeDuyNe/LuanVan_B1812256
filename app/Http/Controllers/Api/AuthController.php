@@ -2,58 +2,72 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Resources\User as UserResource;
 use App\Models\User;
 
-
-class AuthController extends Controller
+class AuthController extends BaseController
 {
-    // Register
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(),[ 
+    /**
+     * Register api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'fullname' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
             'account' => 'required|string|min:5|max:50|unique:users',
             'userID' => 'required|string|min:5|unique:users',
-            'role' => 'required|integer',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
+            're_password' => 'required|same:password',
         ]);
-        
-        if($validator->fails())return response()->json($validator->errors());
-        $user = User::create([
-           'fullname' => $request->fullname,
-           'email' => $request->email,
-           'account' => $request->account,
-           'userID' => $request->userID,
-           'role' => $request->role,
-           'password' => Hash::make($request->password)
-        ]);
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(
-        ['data' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
-    }
 
-    ///login
-    public function login(Request $request) {
-        if (!Auth::attempt($request->only('account', 'password')))  {
-           return response()->json(['message' => 'Unauthorized'], 401);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $user = User::where('account', $request['account'])->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['message' => "'Hi '.$user->fullname",
-           "access_token" => $token, "token_type" => "Bearer"]);
-    }
-    
-    //logout
-    public function logout()  {
-        Auth::user()->tokens()->delete();
-          return ['message' => 'Logged out'];
-   }
+        $user = User::create([
+            'fullname' => $request->fullname,
+            'email' => $request->email,
+            'account' => $request->account,
+            'userID' => $request->userID,
+            'role' => 2,      //    Role (0) admin, (1) for teachers, (2) for students
+            'password' => Hash::make($request->password)
+        ]);
 
-}   
+        $success['token'] =  $user->createToken('auth_token')->plainTextToken;
+        $success['fullname'] =  $user->fullname;
+
+        return $this->sendResponse($success, 'User register successfully.');
+    }
+
+    /**
+     * Login api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function login(Request $request)
+    {
+        if (Auth::attempt(['account' => $request->account, 'password' => $request->password])) {
+            $user = new UserResource(Auth::user());
+            $success['user'] =  $user;
+            $success['bearer-token'] =  $user->createToken('authToken')->plainTextToken;
+
+            return $this->sendResponse($success, 'User login successfully.');
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+        }
+    }
+
+    public function logout()
+    {
+        Auth::user()->tokens()->delete();
+        return ['message' => 'Logged out'];
+    }
+}
