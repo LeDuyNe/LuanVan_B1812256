@@ -52,6 +52,7 @@ class AuthController extends BaseController
      */
     public function login(Request $request)
     {
+        // dd($request->email);
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = new UserResource(Auth::user());
             $success['user'] =  $user;
