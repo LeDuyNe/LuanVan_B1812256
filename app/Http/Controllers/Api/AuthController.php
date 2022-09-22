@@ -22,7 +22,6 @@ class AuthController extends BaseController
         $validator = Validator::make($request->all(), [
             'fullname' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'account' => 'required|string|min:5|max:50|unique:users',
             'userID' => 'required|string|min:5|unique:users',
             'password' => 'required|string|min:6',
             're_password' => 'required|same:password',
@@ -35,7 +34,6 @@ class AuthController extends BaseController
         $user = User::create([
             'fullname' => $request->fullname,
             'email' => $request->email,
-            'account' => $request->account,
             'userID' => $request->userID,
             'role' => 2,      //    Role (0) admin, (1) for teachers, (2) for students
             'password' => Hash::make($request->password)
@@ -54,7 +52,7 @@ class AuthController extends BaseController
      */
     public function login(Request $request)
     {
-        if (Auth::attempt(['account' => $request->account, 'password' => $request->password])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = new UserResource(Auth::user());
             $success['user'] =  $user;
             $success['bearer-token'] =  $user->createToken('authToken')->plainTextToken;
