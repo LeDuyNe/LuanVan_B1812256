@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API\Student;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class StudentController extends BaseController

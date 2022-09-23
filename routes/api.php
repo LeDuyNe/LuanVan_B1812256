@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\API\Admin\AdminController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Api\HomeController;
-use App\Http\Controllers\API\Student\StudentController;
-use App\Http\Controllers\API\Teacher\TeacherController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\StudentController;
+use App\Http\Controllers\API\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +28,8 @@ Route::controller(AuthController::class)->group(function(){
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function(){
-        Route::get('/users', [AdminController::class, 'getUsers']);        
+        Route::get('/users', [AdminController::class, 'getUsers']);   
+        Route::post('/{userID}/delegate', [AdminController::class, 'delegate']);
     });
 
     Route::group(['prefix' => 'teacher', 'middleware' => ['teacher']], function(){
@@ -42,6 +43,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+
+// Route::resource('examinfo','ExaminfoController');
 
 // Route::resource('examinfo','ExaminfoController');
 // Route::resource('makequestion' , 'QuestionController');

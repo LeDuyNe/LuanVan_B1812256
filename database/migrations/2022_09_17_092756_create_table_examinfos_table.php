@@ -20,6 +20,8 @@ class CreateTableExaminfosTable extends Migration
             $table->integer('total_questions');
             $table->string('uniqueid');
             $table->string('time');
+            $table->integer('status');
+            $table->string('timeActive');
 
             $table->timestamps();
             
