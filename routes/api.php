@@ -5,6 +5,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\ExamInfoController;
 use App\Http\Controllers\API\StudentController;
 use App\Http\Controllers\API\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +34,10 @@ Route::middleware('auth:sanctum')->group( function () {
     });
 
     Route::group(['prefix' => 'teacher', 'middleware' => ['teacher']], function(){
-        Route::get('/', [TeacherController::class, 'index']);        
+        Route::get('/', [TeacherController::class, 'index']);
+        Route::group(['prefix' => 'exam'], function(){
+            Route::post('/create-exam', [ExamInfoController::class, 'createExam']);        
+        });        
     });
 
     Route::group(['prefix' => 'student', 'middleware' => ['student']], function(){
