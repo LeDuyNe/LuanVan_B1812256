@@ -15,11 +15,11 @@ class CreateTableUserimagesTable extends Migration
     {
         Schema::create('userimages', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('userID')->unsigned();
+            $table->string('userImagesId')->unique()->primary();
             $table->string('url');
             $table->binary('image');
 
-            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');;
+            $table->foreign('userImagesId')->references('userId')->on('users')->onDelete('cascade');;
 
             $table->timestamps();
         });

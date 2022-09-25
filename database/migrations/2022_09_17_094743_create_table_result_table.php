@@ -15,11 +15,14 @@ class CreateTableResultTable extends Migration
     {
         Schema::create('result', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('userID')->unsigned();
-            $table->string('uniqueid');
+            $table->string('resultId')->unique()->primary();
+            $table->string('examineeId');
+            $table->string('emxamId');
             $table->integer('score')->nullable();
-            
-            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('restTime')->nullable();
+
+            $table->foreign('examineeId')->references('userId')->on('users')->onDelete('cascade');
+            $table->foreign('emxamId')->references('emxamId')->on('exams')->onDelete('cascade');
 
             $table->timestamps();
         });

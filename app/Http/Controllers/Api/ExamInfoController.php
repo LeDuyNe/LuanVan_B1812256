@@ -10,6 +10,9 @@ use Illuminate\Support\Str;
 
 class ExamInfoController extends BaseController
 {
+    public function getExams(Request $request){
+        
+    }
     public function createExam(Request $request)
     {
         $validator = Validator::make($request->all(), [

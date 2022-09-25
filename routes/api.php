@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::group(['prefix' => 'teacher', 'middleware' => ['teacher']], function(){
         Route::get('/', [TeacherController::class, 'index']);
         Route::group(['prefix' => 'exam'], function(){
+            Route::get('/exmas', [ExamInfoController::class, 'getExams']);   
             Route::post('/create-exam', [ExamInfoController::class, 'createExam']);        
         });        
     });

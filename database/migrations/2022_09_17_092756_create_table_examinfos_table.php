@@ -13,19 +13,17 @@ class CreateTableExaminfosTable extends Migration
      */
     public function up()
     {
-        Schema::create('examinfos', function (Blueprint $table) {
+        Schema::create('exams', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('userID')->unsigned();
-            $table->string('course');
-            $table->integer('total_questions');
-            $table->string('uniqueid');
-            $table->string('time');
-            $table->integer('status');
-            $table->string('timeActive');
-
+            
+            $table->string('name');
+            $table->integer('timeDuration');
+            $table->string('timeStart');
+            $table->integer('countLimit');
+            $table->string('creatorId')->unique();
             $table->timestamps();
             
-            $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

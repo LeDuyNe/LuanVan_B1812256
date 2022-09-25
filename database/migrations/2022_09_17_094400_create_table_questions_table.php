@@ -15,17 +15,16 @@ class CreateTableQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('quizID')->unsigned();
-            $table->string('question');
-            $table->string('choice1');
-            $table->string('choice2');
-            $table->string('choice3');
-            $table->string('choice4');
-            $table->string('answer');
+            $table->string('id')->unique()->primary();
+            $table->string('content');
+            $table->string('correctAnswer');
+            $table->string('inCorrectAnswer');
+            $table->integer('level');
+            $table->string('examId');
 
             $table->timestamps();
             
-            $table->foreign('quizID')->references('id')->on('examinfos')->onDelete('cascade');
+            $table->foreign('examId')->references('examId')->on('exams')->onDelete('cascade');
         });
     }
 
