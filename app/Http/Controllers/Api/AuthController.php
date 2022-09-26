@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 
 class AuthController extends BaseController
@@ -31,9 +30,7 @@ class AuthController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
         
-        $uniqid = Str::random(9);
         $user = User::create([
-            'id' => $uniqid,
             'name' => $request->name,
             'email' => $request->email,
             'role' => 2,      //    Role (0) admin, (1) for teachers, (2) for students
@@ -54,8 +51,8 @@ class AuthController extends BaseController
     public function login(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = new UserResource(Auth::user());
-            $success['user'] =  Auth::user('id');
+            $user = new UserResource(Auth::user('id'));
+            $success['user'] =  $user;
             $success['bearer-token'] =  $user->createToken('authToken')->plainTextToken;
 
             return $this->sendResponse($success, 'User login successfully.');

@@ -5,7 +5,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminController;
-use App\Http\Controllers\API\ExamInfoController;
+use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\API\StudentController;
 use App\Http\Controllers\API\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -30,14 +30,17 @@ Route::controller(AuthController::class)->group(function(){
 Route::middleware('auth:sanctum')->group( function () {
     Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function(){
         Route::get('/users', [AdminController::class, 'getUsers']);   
-        Route::post('/{userID}/delegate', [AdminController::class, 'delegate']);
+        Route::post('/{userId}/delegate', [AdminController::class, 'delegate']);
+        
     });
 
     Route::group(['prefix' => 'teacher', 'middleware' => ['teacher']], function(){
         Route::get('/', [TeacherController::class, 'index']);
         Route::group(['prefix' => 'exam'], function(){
-            Route::get('/exmas', [ExamInfoController::class, 'getExams']);   
-            Route::post('/create-exam', [ExamInfoController::class, 'createExam']);        
+            Route::get('/categories', [ExamController::class, 'getCategories']);
+            Route::post('/create-category', [ExamController::class, 'createCategory']); 
+            Route::get('/exmas', [ExamController::class, 'getExams']);
+            Route::post('/create-exam', [ExamController::class, 'createExam']);        
         });        
     });
 

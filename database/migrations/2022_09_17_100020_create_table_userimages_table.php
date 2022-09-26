@@ -14,12 +14,12 @@ class CreateTableUserimagesTable extends Migration
     public function up()
     {
         Schema::create('userimages', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('userImagesId')->unique()->primary();
+            $table->uuid('id')->primary();
+            $table->uuid('userImagesId');
             $table->string('url');
             $table->binary('image');
 
-            $table->foreign('userImagesId')->references('userId')->on('users')->onDelete('cascade');;
+            $table->foreign('userImagesId')->references('id')->on('users')->onDelete('cascade');;
 
             $table->timestamps();
         });

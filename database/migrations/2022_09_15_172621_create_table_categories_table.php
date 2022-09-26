@@ -14,14 +14,13 @@ class CreateTableCategoriesTable extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('userId')->unique();
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('userId'); 
+            $table->uuid('creatorId');
 
             $table->timestamps();
 
-            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

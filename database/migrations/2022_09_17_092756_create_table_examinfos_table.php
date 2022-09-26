@@ -14,13 +14,12 @@ class CreateTableExaminfosTable extends Migration
     public function up()
     {
         Schema::create('exams', function (Blueprint $table) {
-            $table->increments('id');
-            
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->integer('timeDuration');
             $table->string('timeStart');
             $table->integer('countLimit');
-            $table->string('creatorId')->unique();
+            $table->uuid('creatorId');
             $table->timestamps();
             
             $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');

@@ -14,15 +14,13 @@ class CreateTableResultTable extends Migration
     public function up()
     {
         Schema::create('result', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('resultId')->unique()->primary();
-            $table->string('examineeId');
-            $table->string('emxamId');
+            $table->uuid('id')->primary();
             $table->integer('score')->nullable();
             $table->integer('restTime')->nullable();
-
-            $table->foreign('examineeId')->references('userId')->on('users')->onDelete('cascade');
-            $table->foreign('emxamId')->references('emxamId')->on('exams')->onDelete('cascade');
+            $table->uuid('examineeId');
+            $table->uuid('emxamId');
+            $table->foreign('examineeId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('emxamId')->references('id')->on('exams')->onDelete('cascade');
 
             $table->timestamps();
         });
