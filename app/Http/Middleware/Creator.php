@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Teacher
+class Creator
 {
     /**
      * Handle an incoming request.

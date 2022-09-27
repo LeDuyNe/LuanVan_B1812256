@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\API\CreatorController;
+use App\Http\Controllers\API\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
-use App\Http\Controllers\API\StudentController;
-use App\Http\Controllers\API\TeacherController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,32 +20,35 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/error', [HomeController::class, 'permissionError'])->name('permission-error');
 
-Route::controller(AuthController::class)->group(function(){
-    Route::post('/register', [AuthController::class, 'register']);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/error', [AuthController::class, 'permissionError'])->name('permission-error');
 });
 
-Route::middleware('auth:sanctum')->group( function () {
-    Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function(){
-        Route::get('/users', [AdminController::class, 'getUsers']);   
-        Route::post('/{userId}/delegate', [AdminController::class, 'delegate']);
-        
+Route::middleware('auth:sanctum')->group(function () {
+    Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+        Route::get('/users', [AdminController::class, 'getUsers']);
+        Route::post('/delegate/{id}', [AdminController::class, 'delegate'])->name("admin.delegate");
+        Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name("admin.delete");
     });
 
-    Route::group(['prefix' => 'teacher', 'middleware' => ['teacher']], function(){
-        Route::get('/', [TeacherController::class, 'index']);
-        Route::group(['prefix' => 'exam'], function(){
-            Route::get('/categories', [ExamController::class, 'getCategories']);
-            Route::post('/create-category', [ExamController::class, 'createCategory']); 
-            Route::get('/exmas', [ExamController::class, 'getExams']);
-            Route::post('/create-exam', [ExamController::class, 'createExam']);        
-        });        
+    Route::group(['prefix' => 'creator', 'middleware' => ['creator']], function () {
+        Route::get('/', [CreatorController::class, 'index']);
+        Route::group(['prefix' => 'category'], function () {
+            Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
+            Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
+            Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
+        });
+        Route::group(['prefix' => 'exam'], function () {
+            Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
+            Route::post('/createExam', [ExamController::class, 'createExam'])->name("exam.createExam");
+        });
     });
 
-    Route::group(['prefix' => 'student', 'middleware' => ['student']], function(){
-        Route::get('/', [StudentController::class, 'index']);         
+    Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
+        Route::get('/', [ExamineesController::class, 'index']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -59,5 +62,3 @@ Route::middleware('auth:sanctum')->group( function () {
 // Route::resource('student','StudentController');
 // Route::resource('answer','AnswerController');
 // Route::resource('result' , 'ResultController');
-
-

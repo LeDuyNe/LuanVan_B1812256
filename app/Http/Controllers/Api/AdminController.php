@@ -2,33 +2,52 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\API\BaseController;
+use App\Http\Controllers\AbstractApiController;
+use App\Http\Requests\AdminRequests;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
-class AdminController extends BaseController
+class AdminController extends AbstractApiController
 {
-    public function getUsers(Request $request)
+    public function getUsers()
     {
         $users = UserResource::collection(User::all()->except(Auth::id()));
-        return $this->sendResponse($users, 'List all users');
+
+        $this->setData($users);
+        $this->setStatus('200');
+        $this->setMessage("List all users");
+
+        return $this->respond();
     }
 
-    public function delegate(Request $request){
-        $validator = Validator::make($request->all(), [
-            'userId' => 'required|string',
-        ]);
+    public function delegate(AdminRequests $request)
+    {
+        $validated_request = $request->validated();
 
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
+        $user = User::where('id', $validated_request['id'])->update(['role' => 1]);
+        $user = new UserResource(User::where('id',  $validated_request['id'])->first());
+
+        $this->setData($user);
+        $this->setStatus('200');
+        $this->setMessage("Delegating successfully");
+
+        return $this->respond();
+    }
+
+    public function delete(AdminRequests $request)
+    {
+        $validated_request = $request->validated();
         
-        $user = User::where('id',$request->userId)->update(['role'=> 1]);
-        $user = new UserResource(User::where('id',$request->userId)->first());
-    
-        return $this->sendResponse($user, 'Delegating successfully.');
+        $user = User::FindOrFail($validated_request['id']);
+        if ($user->delete()) {
+            $this->setStatus('200');
+            $this->setMessage("Delete successfully");
+
+            return $this->respond();
+        }
+        $this->setMessage("Delete Failed");
+
+        return $this->respond();
     }
 }
