@@ -24,15 +24,30 @@ class ExamRequests extends FormRequest
         $name = request()->route()->getName();
         $id = request()->route('id');
         switch ($name) {
-            case 'exam.createCategory':
+            case 'exam.getExam':
                 return [
-                    'name' => 'string|required',
-                    'id' => ['required', 'string', 'exists:users,id']
+                    // 'id' => ['required', 'string', 'exists:categories,id'],
                 ];
                 break;
-            case 'admin.delete':
+            case 'exam.createExam':
                 return [
-                    'id' => ['required', 'string', 'exists:users,id'],
+                    'categoryId' => ['required', 'string', 'exists:categories,id'],
+                    'name' => ['required', 'string'],
+                    'newQuizList' => ['required', 'string'],
+                    'timeDuration' => ['required', 'integer'],
+                    'timeStart' => ['required', 'integer'],
+                    'countLimit' => ['required', 'integer'],
+                ];
+                break;
+            case 'exam.updateExam':
+                return [
+                    // 'id' => ['required', 'string', 'exists:categories,id'],
+                    // 'name' => 'string|required',
+                ];
+                break;
+            case 'exam.deleteExam':
+                return [
+                    // 'id' => ['required', 'string', 'exists:categories,id'],
                 ];
                 break;
             default:

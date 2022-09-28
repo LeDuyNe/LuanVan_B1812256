@@ -45,7 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         Route::group(['prefix' => 'exam'], function () {
             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
-            Route::post('/createExam', [ExamController::class, 'createExam'])->name("exam.createExam");
+            Route::get('/{id}', [ExamController::class, 'getExam'])->name("exam.getExam");
+            Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+            Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+            Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         });
     });
 
