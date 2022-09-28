@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\Request;
 
 class AbstractApiController extends Controller
 {

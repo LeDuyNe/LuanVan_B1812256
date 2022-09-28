@@ -24,8 +24,19 @@ class CategoryRequests extends FormRequest
         $name = request()->route()->getName();
         $id = request()->route('id');
         switch ($name) {
+            case 'category.getCategorie':
+                return [
+                    'id' => ['required', 'string', 'exists:categories,id'],
+                ];
+                break;
             case 'category.createCategory':
                 return [
+                    'name' => 'string|required',
+                ];
+                break;
+            case 'category.updateCategory':
+                return [
+                    'id' => ['required', 'string', 'exists:categories,id'],
                     'name' => 'string|required',
                 ];
                 break;

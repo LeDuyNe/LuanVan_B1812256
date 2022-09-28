@@ -38,7 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CreatorController::class, 'index']);
         Route::group(['prefix' => 'category'], function () {
             Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
+            Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
             Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
+            Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
             Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
         });
         Route::group(['prefix' => 'exam'], function () {
