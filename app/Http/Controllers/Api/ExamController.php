@@ -5,39 +5,54 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\ExamRequests;
 use App\Models\Category;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Examinfo;
+use App\Models\Exams;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
+
 class ExamController extends AbstractApiController
-{    
-    public function getExams(){
-        
+{
+    public function getExams()
+    {
     }
 
-    public function getExam(ExamRequests $request){
-
+    public function getExam(ExamRequests $request)
+    {
     }
 
     public function createExam(ExamRequests $request)
-    {       
-        $validated_request = $request->validated(); 
-        // $uniqueid = Str::random(9);
-        
-        // $examinfo = Examinfo::create([
-        //         'userID' => Auth::id(),
-        //         'course' => $request->course,
-        //         'total_questions' => $request->total_questions,
-        //         'uniqueid' => $uniqueid,
-        //         'time' => $request->time,
-        //         'status' => $request->status,
-        //         'timeActive' => $request->timeActive
-        //     ]);
+    {
+        $validated_request = $request->validated();
 
-        //     $success['data'] =  $examinfo;
-        //     return $this->sendResponse($success, 'Create exam successfully.');
+        $name_exam = Str::lower($validated_request['name']);
+        $categoryId = $validated_request['timeStart'];
+        $name = Str::lower($validated_request['name']);
+        $newQuizList = $validated_request['newQuizList'];
+        $timeDuration = $validated_request['timeDuration'];
+        $timeStart =  gmdate("Y-m-d H:i:s", $validated_request['timeStart']);
+        $countLimit = $validated_request['countLimit'];
+
+        $userId = auth()->id();
+
+        $checkExam = Exams::where(['creatorId' => $userId, 'name' => $name_exam])->first();
+        if (!$checkExam) {
+            $category = Category::create([
+                'name' => $name_category,
+                'creatorId' => $userId
+            ]);
+
+        $exam = Exams::create([
+            'name' => $name,
+            'timeDuration' => $timeDuration,
+            'timeStart' => $timeStart,
+            'countLimit' => $countLimit,
+            'creatorId' => Auth::id(),
+        ]);
+
+        $this->setStatus('200');
+        $this->setMessage("Successfully !");
+
+        return $this->respond();
     }
 
     public function updateCategory(ExamRequests $request)
@@ -78,5 +93,4 @@ class ExamController extends AbstractApiController
 
         // return $this->respond();
     }
-
 }

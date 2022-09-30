@@ -5,20 +5,19 @@ namespace App\Models;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Exams extends Model
 {
-    use HasFactory, Uuids;
-    protected $table = 'examinfos';
+    use HasFactory, Uuids, Notifiable;
+    protected $table = 'exams';
 
     protected $fillable = [
-        'userID',
-        'course',
-        'total_questions',
-        'uniqueid',
-        'time',
-        'status',
-        'timeActive',
+        'name',
+        'timeDuration',
+        'timeStart',
+        'countLimit',
+        'creatorId',
       ];
 
       protected $casts = [
