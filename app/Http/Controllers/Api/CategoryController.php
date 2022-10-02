@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\CategoryRequests;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Exams;
 use Illuminate\Support\Str;
 
 class CategoryController extends AbstractApiController
@@ -85,7 +86,12 @@ class CategoryController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $category = Category::FindOrFail($validated_request['id']);
+        $categoryId = $validated_request['id'];
+        $category = Category::FindOrFail($categoryId);
+        $examId = Exams::where(['categoryId' =>  'categoryId'])->pluck('id')->first();
+      
+        dd($examId);
+        die();
         if ($category->delete()) {
             $this->setStatus('200');
             $this->setMessage("Delete successfully");

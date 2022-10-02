@@ -136,6 +136,7 @@ class ExamController extends AbstractApiController
         $validated_request = $request->validated();
 
         $exam = Exams::FindOrFail($validated_request['id']);
+        
         if ($exam->delete()) {
             $this->setStatus('200');
             $this->setMessage("Delete successfully");
