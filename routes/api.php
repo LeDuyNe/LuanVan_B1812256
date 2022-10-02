@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\API\CreatorController;
 use App\Http\Controllers\API\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
-
+use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,15 +39,22 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
             Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
             Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
-            Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
+            Route::patch('/update/{id}', [CategoryController::class, 'uzpdateCategory'])->name("category.updateCategory");
             Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
         });
         Route::group(['prefix' => 'exam'], function () {
             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
-            Route::get('/{id}', [ExamController::class, 'getExam'])->name("exam.getExam");
+            Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
             Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
             Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
             Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+        });
+
+        Route::group(['prefix' => 'question'], function () {
+            // Route::get('/{id}', [QuestionController::class, 'getQuestion'])->name("question.getExams");
+            Route::get('/{examId}', [QuestionController::class, 'getQuestionsByExamId'])->name("question.getQuestionsByExamId");
+            Route::patch('/update/{id}', [QuestionController::class, 'updateQuestion'])->name("question.updateQuestion");
+            Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion'])->name("question.deleteQuestion");
         });
     });
 

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\ExamRequests;
+use App\Http\Resources\ExamResource;
+use App\Http\Resources\QuestionResource;
 use App\Models\Category;
 use App\Models\Exams;
+use App\Models\Question;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -14,19 +17,51 @@ class ExamController extends AbstractApiController
 {
     public function getExams()
     {
+        // $exams = ExamResource::collection(Exams::where('creatorId', auth()->id())->get());
+        $examsId = Exams::where('creatorId', auth()->id())->get('id');
+
+        $data = array();
+        foreach($examsId as $examId){
+            $exam = ExamResource::collection(Exams::where('id', $examId['id'])->get());
+            $questions = QuestionResource::collection(Question::where('examId', $examId['id'])->get());
+
+            $result = [
+                ['info' => $exam, 'questions' => $questions]
+            ];
+
+            array_push($data, $result);
+        }
+
+        $this->setData($data);
+        $this->setStatus('200');
+        $this->setMessage("List all exams");
+
+        return $this->respond($examId);
     }
 
-    public function getExam(ExamRequests $request)
+    public function getDetailExam(ExamRequests $request)
     {
+        $validated_request = $request->validated();
+        $examId = $validated_request['id'];
+
+        $exam = ExamResource::collection(Exams::where('id', $examId)->get());
+        $questions = QuestionResource::collection(Question::where('examId', $examId)->get());
+
+        $data['info'] = $exam;
+        $data['questions'] = $questions;
+        
+        $this->setData($data);
+        $this->setStatus('200');
+        $this->setMessage("Succefully !");
+        return $this->respond();
     }
 
     public function createExam(ExamRequests $request)
     {
         $validated_request = $request->validated();
 
+        $categoryId = $validated_request['categoryId'];
         $name_exam = Str::lower($validated_request['name']);
-        $categoryId = $validated_request['timeStart'];
-        $name = Str::lower($validated_request['name']);
         $newQuizList = $validated_request['newQuizList'];
         $timeDuration = $validated_request['timeDuration'];
         $timeStart =  gmdate("Y-m-d H:i:s", $validated_request['timeStart']);
@@ -36,23 +71,41 @@ class ExamController extends AbstractApiController
 
         $checkExam = Exams::where(['creatorId' => $userId, 'name' => $name_exam])->first();
         if (!$checkExam) {
-            $category = Category::create([
-                'name' => $name_category,
-                'creatorId' => $userId
+            $exam = Exams::create([
+                'name' => $name_exam,
+                'timeDuration' => $timeDuration,
+                'timeStart' => $timeStart,
+                'countLimit' => $countLimit,
+                'categoryId' => $categoryId,
+                'creatorId' => Auth::id(),
             ]);
 
-        $exam = Exams::create([
-            'name' => $name,
-            'timeDuration' => $timeDuration,
-            'timeStart' => $timeStart,
-            'countLimit' => $countLimit,
-            'creatorId' => Auth::id(),
-        ]);
+            foreach ($newQuizList as $quiz) {
+                $content = $quiz['content'];
+                $correctAnswer = $quiz['correctAnswer'];
+                $inCorrectAnswer = $quiz['inCorrectAnswer'];
+                $level = $quiz['level'];
 
-        $this->setStatus('200');
-        $this->setMessage("Successfully !");
-
-        return $this->respond();
+                $question = Question::create([
+                    'content' => $content,
+                    'correctAnswer' => $correctAnswer,
+                    'inCorrectAnswer' => json_encode($inCorrectAnswer),
+                    'level' => $level,
+                    'examId' => $exam['id'],
+                ]);
+            }
+            if ($question) {
+                $this->setData($exam);
+                $this->setMessage("Creat Exam is successfully !");
+                return $this->respond();
+            } else {
+                $this->setMessage("Creat Exam is fail !");
+                return $this->respond();
+            }
+        } else {
+            $this->setMessage("Name of exam is existed!");
+            return $this->respond();
+        }
     }
 
     public function updateCategory(ExamRequests $request)
@@ -80,17 +133,17 @@ class ExamController extends AbstractApiController
 
     public function deleteExam(ExamRequests $request)
     {
-        // $validated_request = $request->validated();
+        $validated_request = $request->validated();
 
-        // $category = Category::FindOrFail($validated_request['id']);
-        // if ($category->delete()) {
-        //     $this->setStatus('200');
-        //     $this->setMessage("Delete successfully");
+        $exam = Exams::FindOrFail($validated_request['id']);
+        if ($exam->delete()) {
+            $this->setStatus('200');
+            $this->setMessage("Delete successfully");
 
-        //     return $this->respond();
-        // }
-        // $this->setMessage("Delete Failed");
+            return $this->respond();
+        }
+        $this->setMessage("Delete Failed");
 
-        // return $this->respond();
+        return $this->respond();
     }
 }

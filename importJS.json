@@ -1,38 +1,39 @@
-[
+{
+  "categoryId": "3a734e47-2308-409a-b27d-8630696031d1",
+  "name": "Basic Math",
+  "newQuizList": [
     {
       "content": "1 + 1 = ?",
       "correctAnswer": "1",
-      "inCorrectAnswer": {
-        [
-            "1" ;
-            "2";
-            "3"
-        ]
-      },
+      "inCorrectAnswer": [
+        "1",
+        "2",
+        "3"
+      ],
       "level": 1
     },
     {
       "content": "2 + 2 = ?",
       "correctAnswer": "4",
-      "inCorrectAnswer": {
-        [
-            "2" ;
-            "3";
-            "4"
-        ]
-      },
+      "inCorrectAnswer": [
+        "2",
+        "3",
+        "4"
+      ],
       "level": 1
     },
     {
       "content": "3 + 3 = ?",
       "correctAnswer": "6",
-      "inCorrectAnswer": {
-        [
-            "6" ;
-            "7";
-            "8"
-        ]
-      },
+      "inCorrectAnswer": [
+        "6",
+        "7",
+        "8"
+      ],
       "level": 1
     }
-  ]
+  ],
+  "timeDuration": 60,
+  "timeStart": 1664790405,
+  "countLimit": 2
+}

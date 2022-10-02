@@ -19,10 +19,12 @@ class CreateTableExaminfosTable extends Migration
             $table->integer('timeDuration');
             $table->string('timeStart');
             $table->integer('countLimit');
+            $table->uuid('categoryId');
             $table->uuid('creatorId');
             $table->timestamps();
             
             $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ExamRequests extends FormRequest
+class QuestionRequests extends FormRequest
 {
     public function authorize()
     {
@@ -24,31 +24,25 @@ class ExamRequests extends FormRequest
         $name = request()->route()->getName();
         $id = request()->route('id');
         switch ($name) {
-            case 'exam.getDetailExam':
+            // case 'question.getQuestion':
+            //     return [
+            //         'id' => ['required', 'string', 'exists:questions,id'],
+            //     ];
+            //     break;
+            case 'question.getQuestionsByExamId':
                 return [
-                    'id' => ['required', 'string', 'exists:exams,id'],
+                    'examId' => ['required', 'string', 'exists:exams,id'],
                 ];
                 break;
-            case 'exam.createExam':
+            case 'question.updateQuestion':
                 return [
-                    'categoryId' => ['required', 'string', 'exists:categories,id'],
-                    'name' => ['required', 'string'],
-                    'newQuizList' => ['required', 'array'],
-                    // "newQuizList.*"  => ['required','string'],
-                    'timeDuration' => ['required', 'integer'],
-                    'timeStart' => ['required', 'integer'],
-                    'countLimit' => ['required', 'integer'],
+                    'id' => ['required', 'string', 'exists:categories,id'],
+                    'name' => 'string|required',
                 ];
                 break;
-            case 'exam.updateExam':
+            case 'question.deleteQuestion':
                 return [
-                    // 'id' => ['required', 'string', 'exists:categories,id'],
-                    // 'name' => 'string|required',
-                ];
-                break;
-            case 'exam.deleteExam':
-                return [
-                    'id' => ['required', 'string', 'exists:exams,id'],
+                    'id' => ['required', 'string', 'exists:questions,id'],
                 ];
                 break;
             default:
@@ -60,6 +54,7 @@ class ExamRequests extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
+        $this->merge(['examId' => $this->route('examId')]);
     }
 
     protected function failedValidation(Validator $validator)
