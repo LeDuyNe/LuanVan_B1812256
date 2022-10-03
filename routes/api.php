@@ -39,13 +39,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
             Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
             Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
-            Route::patch('/update/{id}', [CategoryController::class, 'uzpdateCategory'])->name("category.updateCategory");
+            Route::put('/active/{id}', [CategoryController::class, 'activeCategory'])->name("category.activeCategory");
+            Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
             Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
         });
         Route::group(['prefix' => 'exam'], function () {
             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
             Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
             Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+            Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
             Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
             Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         });

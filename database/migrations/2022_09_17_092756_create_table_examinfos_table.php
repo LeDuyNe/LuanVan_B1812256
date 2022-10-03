@@ -19,6 +19,8 @@ class CreateTableExaminfosTable extends Migration
             $table->integer('timeDuration');
             $table->string('timeStart');
             $table->integer('countLimit');
+            $table->string('note')->nullable();
+            $table->boolean('isPublished')->default(0);  
             $table->uuid('categoryId');
             $table->uuid('creatorId');
             $table->timestamps();

@@ -17,6 +17,8 @@ class Exams extends Model
         'timeDuration',
         'timeStart',
         'countLimit',
+        'note',
+        'isPublished',
         'categoryId',
         'creatorId',
       ];

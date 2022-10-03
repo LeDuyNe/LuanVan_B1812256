@@ -20,7 +20,7 @@ class CreateTableQuestionsTable extends Migration
             $table->string('inCorrectAnswer');
             $table->integer('level');
             $table->uuid('examId');
-
+       
             $table->timestamps();
             
             $table->foreign('examId')->references('id')->on('exams')->onDelete('cascade');

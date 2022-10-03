@@ -31,16 +31,25 @@ class CategoryRequests extends FormRequest
                 break;
             case 'category.createCategory':
                 return [
-                    'name' => 'string|required',
+                    'name' => ['string', 'required'],
+                    'note' => ['string', 'nullable'],
+                    'is_published' => ['boolean', 'nullable'],
                 ];
                 break;
             case 'category.updateCategory':
                 return [
                     'id' => ['required', 'string', 'exists:categories,id'],
-                    'name' => 'string|required',
+                    'name' => ['string', 'nullable'],
+                    'note' => ['string', 'nullable'],
+                    'is_published' => ['boolean', 'nullable'],
                 ];
                 break;
             case 'category.deleteCategory':
+                return [
+                    'id' => ['required', 'string', 'exists:categories,id'],
+                ];
+                break;
+            case 'category.activeCategory':
                 return [
                     'id' => ['required', 'string', 'exists:categories,id'],
                 ];

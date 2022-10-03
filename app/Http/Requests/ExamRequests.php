@@ -34,10 +34,16 @@ class ExamRequests extends FormRequest
                     'categoryId' => ['required', 'string', 'exists:categories,id'],
                     'name' => ['required', 'string'],
                     'newQuizList' => ['required', 'array'],
-                    // "newQuizList.*"  => ['required','string'],
                     'timeDuration' => ['required', 'integer'],
                     'timeStart' => ['required', 'integer'],
                     'countLimit' => ['required', 'integer'],
+                    'note' => ['string', 'nullable'],
+                    'isPublished' => ['boolean', 'nullable'],
+                ];
+                break;
+            case 'exam.activeExam':
+                return [
+                    'id' => ['required', 'string', 'exists:exams,id'],
                 ];
                 break;
             case 'exam.updateExam':
