@@ -42,25 +42,25 @@ class CategoryController extends AbstractApiController
 
         $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
         if (!$checkCategory) {
-            if (!empty($validated_request['note']) && empty($validated_request['is_published'])) {
+            if (!empty($validated_request['note']) && empty($validated_request['isPublished'])) {
                 $category = Category::create([
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
-            } elseif (empty($validated_request['note']) && !empty($validated_request['is_published'])) {
+            } elseif (empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
                 $category = Category::create([
                     'name' => $name_category,
-                    'is_published' =>   $validated_request['is_published'],
+                    'isPublished' =>   $validated_request['isPublished'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
-            } elseif (!empty($validated_request['note']) && !empty($validated_request['is_published'])) {
+            } elseif (!empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
                 $category = Category::create([
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
-                    'is_published' =>   $validated_request['is_published'],
+                    'isPublished' =>   $validated_request['isPublished'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -145,7 +145,7 @@ class CategoryController extends AbstractApiController
         $validated_request = $request->validated();
 
         $category = Category::where('id', $validated_request['id'])->where('creatorId', auth()->id())->update([
-            "is_published" => 1
+            "isPublished" => 1
         ]);
 
         if ($category) {

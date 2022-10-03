@@ -33,7 +33,7 @@ class CategoryRequests extends FormRequest
                 return [
                     'name' => ['string', 'required'],
                     'note' => ['string', 'nullable'],
-                    'is_published' => ['boolean', 'nullable'],
+                    'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
             case 'category.updateCategory':
@@ -41,7 +41,7 @@ class CategoryRequests extends FormRequest
                     'id' => ['required', 'string', 'exists:categories,id'],
                     'name' => ['string', 'nullable'],
                     'note' => ['string', 'nullable'],
-                    'is_published' => ['boolean', 'nullable'],
+                    'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
             case 'category.deleteCategory':

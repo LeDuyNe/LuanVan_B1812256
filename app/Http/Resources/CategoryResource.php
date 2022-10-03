@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'note' => $this->note,
-            'is_published' => $this->is_published
+            'isPublished' => $this->isPublished
             // 'creatorId' => $this->creatorId,
         ];
     }

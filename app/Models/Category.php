@@ -21,7 +21,7 @@ class Category extends Model
     protected $fillable = [
         'name',
         'note',
-        'is_published',
+        'isPublished',
         'creatorId',
       ];
 
