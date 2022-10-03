@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\API\AdminController;
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\API\CreatorController;
-use App\Http\Controllers\API\ExamineesController;
+use App\Http\Controllers\Api\CreatorController;
+use App\Http\Controllers\Api\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +21,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::controller('App\Http\Controllers\API\AuthController')->group(function () {
-    Route::post('/register', ['App\Http\Controllers\API\AuthController', 'register'])->name('register');
-    Route::post('/login', ['App\Http\Controllers\API\AuthController', 'login'])->name('login');
-    Route::get('/error', ['App\Http\Controllers\API\AuthController', 'permissionError'])->name('permission-error');
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/error', [AuthController::class, 'permissionError'])->name('permission-error');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
