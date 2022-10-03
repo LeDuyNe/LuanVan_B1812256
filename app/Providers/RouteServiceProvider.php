@@ -49,6 +49,8 @@ class RouteServiceProvider extends ServiceProvider
         });
     }
 
+    // pu
+
     /**
      * Configure the rate limiters for the application.
      *
