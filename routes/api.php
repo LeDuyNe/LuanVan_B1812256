@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
