@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\API\CreatorController;
 use App\Http\Controllers\API\ExamineesController;
