@@ -19,11 +19,11 @@ class CreateTableQuestionsTable extends Migration
             $table->string('correctAnswer');
             $table->string('inCorrectAnswer');
             $table->integer('level');
-            $table->uuid('examId');
+            $table->uuid('questionBankId');
        
             $table->timestamps();
             
-            $table->foreign('examId')->references('id')->on('exams')->onDelete('cascade');
+            $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
         });
     }
 
