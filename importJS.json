@@ -1,14 +1,14 @@
 {
-  "categoryId": "3a734e47-2308-409a-b27d-8630696031d1",
-  "name": "Basic Math",
+  "categoryId": "4da12c24-b0c7-43c5-9e3b-60de94f80f00",
+  "name": "Bộ Đề Toán Cấp 1",
   "newQuizList": [
     {
       "content": "1 + 1 = ?",
       "correctAnswer": "1",
       "inCorrectAnswer": [
-        "1",
         "2",
-        "3"
+        "3",
+        "4"
       ],
       "level": 1
     },
@@ -18,19 +18,59 @@
       "inCorrectAnswer": [
         "2",
         "3",
-        "4"
+        "5"
       ],
-      "level": 1
+      "level": 2
     },
     {
       "content": "3 + 3 = ?",
       "correctAnswer": "6",
       "inCorrectAnswer": [
-        "6",
-        "7",
-        "8"
+        "8",
+        "1",
+        "2"
       ],
       "level": 1
+    },
+    {
+      "content": "4 + 4 = ?",
+      "correctAnswer": "8",
+      "inCorrectAnswer": [
+        "6",
+        "7",
+        "9"
+      ],
+      "level": 2
+    },
+    {
+      "content": "5 + 5 = ?",
+      "correctAnswer": "10",
+      "inCorrectAnswer": [
+        "2",
+        "3",
+        "4"
+      ],
+      "level": 2
+    },
+    {
+      "content": "100 + 5 = ?",
+      "correctAnswer": "105",
+      "inCorrectAnswer": [
+        "222",
+        "312",
+        "474"
+      ],
+      "level": 3
+    },
+    {
+      "content": "100 + 212 = ?",
+      "correctAnswer": "212",
+      "inCorrectAnswer": [
+        "781",
+        "442",
+        "662"
+      ],
+      "level": 3
     }
   ],
   "timeDuration": 60,

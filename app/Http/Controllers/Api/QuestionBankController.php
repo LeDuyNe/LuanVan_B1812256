@@ -19,7 +19,7 @@ class QuestionBankController extends AbstractApiController
         $questionsBankId = QuestionBank::where('creatorId', auth()->id())->get('id');
 
         $data = array();
-        foreach($questionsBankId as $questionBankId){
+        foreach ($questionsBankId as $questionBankId) {
             $questionBank['general'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId['id'])->get());
             $questionBank['questions'] = QuestionResource::collection(Question::where('questionBankId', $questionBankId['id'])->get());
             array_push($data, $questionBank);
@@ -29,10 +29,11 @@ class QuestionBankController extends AbstractApiController
         $this->setStatus('200');
         $this->setMessage("List all exams");
 
-        return $this->respond($questionBank);
+        return $this->respond();
     }
 
-    public function getDetailQuestionBank(QuestionBankRequests $request){
+    public function getDetailQuestionBank(QuestionBankRequests $request)
+    {
         $validated_request = $request->validated();
         $questionsBankId = $validated_request['id'];
 
@@ -104,14 +105,13 @@ class QuestionBankController extends AbstractApiController
 
                 $info = array();
                 array_push($info, $questionEasy, $questionNormal, $questionDifficult);
-                // dd($info);
-                // die();
+
                 QuestionBank::where('id', $questionBank['id'])->where('creatorId', auth()->id())->update([
                     "info" => json_encode($info)
                 ]);
 
                 if ($question) {
-                    $this->setData($questionBank);
+                    $this->setData(new QuestionBankResource($questionBank));
                     $this->setMessage("Creat Exam is successfully !");
                     return $this->respond();
                 } else {
@@ -122,6 +122,104 @@ class QuestionBankController extends AbstractApiController
                 $this->setMessage("Name of exam is existed!");
                 return $this->respond();
             }
+        }
+    }
+
+    public function adddQuestionBank(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionBankId = $validated_request['id'];
+        $newQuizList = $validated_request['newQuizList'];
+        $userId = auth()->id();
+
+        $checkQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->first();
+        if ($checkQuestionBank) {
+  
+            $questionEasy = 0;
+            $questionNormal = 0;
+            $questionDifficult = 0;
+
+            foreach ($newQuizList as $question) {
+                $content = $question['content'];
+                $correctAnswer = $question['correctAnswer'];
+                $inCorrectAnswer = $question['inCorrectAnswer'];
+                $level = $question['level'];
+
+                if ($level == 1) {
+                    $questionEasy++;
+                } elseif ($level == 2) {
+                    $questionNormal++;
+                } else {
+                    $questionDifficult++;
+                }
+
+                // $question = Question::create([
+                //     'content' => $content,
+                //     'correctAnswer' => $correctAnswer,
+                //     'inCorrectAnswer' => json_encode($inCorrectAnswer),
+                //     'level' => $level,
+                //     'questionBankId' => $questionBankId,
+                // ]);
+            }
+
+            $infoQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->pluck('info');
+
+            // $infoQuestionEasy = $infoQuestionBank[0];
+            // $infoQuestionNormal = $infoQuestionBank[1];
+            // $infoQuestionDifficult = $infoQuestionBank[2];
+            foreach($infoQuestionBank[0] as $level){
+                dd($level);
+            }
+            // dd($infoQuestionBank[0]);
+            die();
+
+            $info = array();
+            array_push(
+                $info,
+                $questionEasy + $infoQuestionEasy,
+                $questionNormal + $infoQuestionNormal,
+                $questionDifficult + $infoQuestionDifficult
+            );
+
+            QuestionBank::where('id', $questionBankId)->where('creatorId', $userId)->update([
+                "info" => json_encode($info)
+            ]);
+
+            if ($question) {
+                $this->setData(new QuestionBankResource($checkQuestionBank));
+                $this->setMessage("Add new questions is successfully !");
+                return $this->respond();
+            } else {
+                $this->setMessage("Add new questions is fail !");
+                return $this->respond();
+            }
+        }
+    }
+
+    public function deleteQuestionBank(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionBankId = $validated_request['id'];
+        $questionBank = QuestionBank::FindOrFail($questionBankId);
+        // dd($questionBank);
+        // die();
+        $questionsId = QuestionBank::where(['id' =>  $questionBankId])->pluck('id')->toArray();
+        if ($questionsId) {
+            $this->setStatus('400');
+            $this->setMessage("Failed, you have to delete exams before deleting question bank");
+            return $this->respond();
+        } else {
+            if ($questionBank->delete()) {
+                $this->setStatus('200');
+                $this->setMessage("Delete successfully");
+
+                return $this->respond();
+            }
+            $this->setMessage("Delete Failed");
+
+            return $this->respond();
         }
     }
 }
