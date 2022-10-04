@@ -7,16 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
-class Exams extends Model
+class QuestionBank extends Model
 {
     use HasFactory, Uuids, Notifiable;
-    protected $table = 'exams';
+    protected $table = 'questionbank';
 
     protected $fillable = [
         'name',
-        'timeDuration',
-        'timeStart',
-        'countLimit',
+        'info',
+        'note',
         'categoryId',
         'creatorId',
       ];

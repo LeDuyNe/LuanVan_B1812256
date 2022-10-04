@@ -24,7 +24,7 @@ class Question extends Authenticatable
         'correctAnswer',
         'inCorrectAnswer',
         'level',
-        'examId',
+        'questionBankId',
       ];
 
     protected $casts = [

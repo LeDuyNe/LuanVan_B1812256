@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\QuestionBankController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CreatorController;
 use App\Http\Controllers\Api\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
-use App\Http\Controllers\Api\QuestionController;
+// use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -44,6 +45,22 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
             Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
         });
+
+        Route::group(['prefix' => 'questionbank'], function () {
+            Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
+            Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
+            Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
+            Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
+            Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
+        });
+
+        // Route::group(['prefix' => 'question'], function () {
+        //     // Route::get('/{id}', [QuestionController::class, 'getQuestion'])->name("question.getQuestions");
+        //     Route::get('/{examId}', [QuestionController::class, 'getQuestionsByExamId'])->name("question.getQuestionsByExamId");
+        //     Route::patch('/update/{id}', [QuestionController::class, 'updateQuestion'])->name("question.updateQuestion");
+        //     Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion'])->name("question.deleteQuestion");
+        // });
+
         Route::group(['prefix' => 'exam'], function () {
             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
             Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
@@ -52,23 +69,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
             Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         });
-
-        Route::group(['prefix' => 'question'], function () {
-            // Route::get('/{id}', [QuestionController::class, 'getQuestion'])->name("question.getExams");
-            Route::get('/{examId}', [QuestionController::class, 'getQuestionsByExamId'])->name("question.getQuestionsByExamId");
-            Route::patch('/update/{id}', [QuestionController::class, 'updateQuestion'])->name("question.updateQuestion");
-            Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion'])->name("question.deleteQuestion");
-        });
-
-        Route::group(['prefix' => 'exam'], function () {
-            Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
-            Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
-            Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
-            Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
-            Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
-            Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
-        });
-
     });
 
     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
