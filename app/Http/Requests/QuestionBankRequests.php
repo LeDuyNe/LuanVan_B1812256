@@ -59,6 +59,11 @@ class QuestionBankRequests extends FormRequest
                     'id' => ['required', 'string', 'exists:questionbank,id'],
                 ];
                 break;
+            case 'questionbank.deleteQuestion':
+                return [
+                    'id' => ['required', 'string', 'exists:questions,id'],
+                ];
+                break;
             default:
                 return [];
                 break;

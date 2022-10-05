@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/add/{id}', [QuestionBankController::class, 'adddQuestionBank'])->name("questionbank.adddQuestionBank");
             Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
             Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
+            Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
         });
 
         // Route::group(['prefix' => 'question'], function () {

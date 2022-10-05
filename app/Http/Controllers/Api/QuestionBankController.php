@@ -76,9 +76,9 @@ class QuestionBankController extends AbstractApiController
 
                 ]);
 
-                $questionEasy = 0;
-                $questionNormal = 0;
-                $questionDifficult = 0;
+                $levelEasy = 0;
+                $levelNormal = 0;
+                $levelDifficult = 0;
 
                 foreach ($newQuizList as $question) {
                     $content = $question['content'];
@@ -87,11 +87,11 @@ class QuestionBankController extends AbstractApiController
                     $level = $question['level'];
 
                     if ($level == 1) {
-                        $questionEasy++;
+                        $levelEasy++;
                     } elseif ($level == 2) {
-                        $questionNormal++;
+                        $levelNormal++;
                     } else {
-                        $questionDifficult++;
+                        $levelDifficult++;
                     }
 
                     $question = Question::create([
@@ -103,11 +103,8 @@ class QuestionBankController extends AbstractApiController
                     ]);
                 }
 
-                $info = array();
-                array_push($info, $questionEasy, $questionNormal, $questionDifficult);
-
                 QuestionBank::where('id', $questionBank['id'])->where('creatorId', auth()->id())->update([
-                    "info" => json_encode($info)
+                    "info" => ['easy'=> $levelEasy, 'normal' => $levelNormal, 'difficult' => $levelDifficult]
                 ]);
 
                 if ($question) {
@@ -136,9 +133,9 @@ class QuestionBankController extends AbstractApiController
         $checkQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->first();
         if ($checkQuestionBank) {
   
-            $questionEasy = 0;
-            $questionNormal = 0;
-            $questionDifficult = 0;
+            $levelNewEasy = 0;
+            $levelNewNormal = 0;
+            $levelNewDifficult = 0;
 
             foreach ($newQuizList as $question) {
                 $content = $question['content'];
@@ -147,47 +144,36 @@ class QuestionBankController extends AbstractApiController
                 $level = $question['level'];
 
                 if ($level == 1) {
-                    $questionEasy++;
+                    $levelNewEasy++;
                 } elseif ($level == 2) {
-                    $questionNormal++;
+                    $levelNewNormal++;
                 } else {
-                    $questionDifficult++;
+                    $levelNewDifficult++;
                 }
 
-                // $question = Question::create([
-                //     'content' => $content,
-                //     'correctAnswer' => $correctAnswer,
-                //     'inCorrectAnswer' => json_encode($inCorrectAnswer),
-                //     'level' => $level,
-                //     'questionBankId' => $questionBankId,
-                // ]);
+                $question = Question::create([
+                    'content' => $content,
+                    'correctAnswer' => $correctAnswer,
+                    'inCorrectAnswer' => json_encode($inCorrectAnswer),
+                    'level' => $level,
+                    'questionBankId' => $questionBankId,
+                ]);
             }
 
             $infoQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->pluck('info');
+            $infoQuestionBank = json_decode($infoQuestionBank[0], true);
+            $levels = array_values($infoQuestionBank);
 
-            // $infoQuestionEasy = $infoQuestionBank[0];
-            // $infoQuestionNormal = $infoQuestionBank[1];
-            // $infoQuestionDifficult = $infoQuestionBank[2];
-            foreach($infoQuestionBank[0] as $level){
-                dd($level);
-            }
-            // dd($infoQuestionBank[0]);
-            die();
+            $levelEasy = $levels[0];
+            $levelNormal = $levels[1];
+            $levelDifficult = $levels[2];
 
-            $info = array();
-            array_push(
-                $info,
-                $questionEasy + $infoQuestionEasy,
-                $questionNormal + $infoQuestionNormal,
-                $questionDifficult + $infoQuestionDifficult
-            );
 
             QuestionBank::where('id', $questionBankId)->where('creatorId', $userId)->update([
-                "info" => json_encode($info)
+                "info" => ['easy'=> $levelEasy + $levelNewEasy, 'normal' => $levelNormal + $levelNewNormal, 'difficult' => $levelDifficult + $levelNewDifficult]
             ]);
 
             if ($question) {
-                $this->setData(new QuestionBankResource($checkQuestionBank));
                 $this->setMessage("Add new questions is successfully !");
                 return $this->respond();
             } else {
@@ -203,9 +189,8 @@ class QuestionBankController extends AbstractApiController
 
         $questionBankId = $validated_request['id'];
         $questionBank = QuestionBank::FindOrFail($questionBankId);
-        // dd($questionBank);
-        // die();
-        $questionsId = QuestionBank::where(['id' =>  $questionBankId])->pluck('id')->toArray();
+
+        $questionsId = Question::where(['id' =>  $questionBankId])->pluck('id')->toArray();
         if ($questionsId) {
             $this->setStatus('400');
             $this->setMessage("Failed, you have to delete exams before deleting question bank");
@@ -220,6 +205,51 @@ class QuestionBankController extends AbstractApiController
             $this->setMessage("Delete Failed");
 
             return $this->respond();
+        }
+    }
+
+    public function deleteQuestion(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionId = $validated_request['id'];
+        $question = Question::FindOrFail($questionId);
+        
+        $questionBankId = Question::where(['id' =>  $questionId])->pluck('questionBankId')->toArray();
+        $infoQuestionBank = QuestionBank::where(['id' =>  $questionBankId])->where('creatorId', auth()->id())->pluck('info');
+
+        if($question && $infoQuestionBank){
+            $levelQuestion = Question::where(['id' =>  $questionId])->pluck('level')->toArray();
+
+            $infoQuestionBank = json_decode($infoQuestionBank[0], true);
+            $levels = array_values($infoQuestionBank);
+
+            $levelEasy = $levels[0];
+            $levelNormal = $levels[1];
+            $levelDifficult = $levels[2];
+
+  
+            if($levelQuestion[0] == 1){
+                $levelEasy =  $levelEasy - 1;
+            }elseif($levelQuestion[0] == 2){
+                $levelNormal =  $levelNormal - 1;
+            }else{
+                $levelDifficult = $levelDifficult - 1;
+            }
+
+            $question->delete();
+            QuestionBank::where('id', $questionBankId)->where('creatorId', auth()->id())->update([
+                "info" => ['easy'=> $levelEasy , 'normal' => $levelNormal, 'difficult' => $levelDifficult]
+            ]);
+
+
+            $this->setStatus('200');
+            $this->setMessage("Delete successfully");
+
+            return $this->respond();
+        }else{
+            $this->setStatus('400');
+                $this->setMessage("Delete fail");
         }
     }
 }

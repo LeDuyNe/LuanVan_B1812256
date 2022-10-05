@@ -17,7 +17,7 @@ class CreateTableQuestionsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('content');
             $table->string('correctAnswer');
-            $table->string('inCorrectAnswer');
+            $table->json('inCorrectAnswer');
             $table->integer('level');
             $table->uuid('questionBankId');
        
