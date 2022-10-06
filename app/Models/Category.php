@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
 class Category extends Model
 {
-    use HasFactory, Notifiable, Uuids;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +22,7 @@ class Category extends Model
         'note',
         'isPublished',
         'creatorId',
+        'uuid'
       ];
 
       

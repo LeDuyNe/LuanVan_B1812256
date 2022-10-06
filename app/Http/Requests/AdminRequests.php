@@ -26,12 +26,12 @@ class AdminRequests extends FormRequest
         switch ($name) {
             case 'admin.delegate':
                 return [
-                    'id' => ['required', 'string', 'exists:users,id']
+                    'id' => ['required', 'string', 'exists:users,uuid']
                 ];
                 break;
             case 'admin.delete':
                 return [
-                    'id' => ['required', 'string', 'exists:users,id'],
+                    'id' => ['required', 'string', 'exists:users,uuid'],
                 ];
                 break;
             default:

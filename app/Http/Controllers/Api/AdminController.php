@@ -25,8 +25,10 @@ class AdminController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $user = User::where('id', $validated_request['id'])->update(['role' => 1]);
-        $user = new UserResource(User::where('id',  $validated_request['id'])->first());
+        $userId = User::where('uuid', $validated_request['id'])->pluck('id');
+
+        $user = User::where('id', $userId)->update(['role' => 1]);
+        $user = new UserResource(User::where('id',  $userId)->first());
 
         $this->setData($user);
         $this->setStatus('200');
@@ -39,7 +41,9 @@ class AdminController extends AbstractApiController
     {
         $validated_request = $request->validated();
         
-        $user = User::FindOrFail($validated_request['id']);
+        $userId = User::where('uuid', $validated_request['id'])->pluck('id');
+        
+        $user = User::FindOrFail($userId[0]);
         if ($user->delete()) {
             $this->setStatus('200');
             $this->setMessage("Delete successfully");

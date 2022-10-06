@@ -187,12 +187,12 @@ class ExamController extends AbstractApiController
     //     return $this->respond();
     // }
 
-    public function getQuestionId($id, $level){
-        $questionId =Question::where('questionBankId', $id)->where('level', $level)->get('id');
-        return $questionId;
-    }
+    // public function getQuestionId($id, $level){
+    //     $questionId =Question::where('questionBankId', $id)->where('level', $level)->get('id');
+    //     return $questionId;
+    // }
 
-    public function randomQuestion($arrayId, $num){
+    // public function randomQuestion($arrayId, $num){
 
-    }
+    // }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTableQuestionsTable extends Migration
@@ -14,16 +15,12 @@ class CreateTableQuestionsTable extends Migration
     public function up()
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('content');
-            $table->string('correctAnswer');
-            $table->json('inCorrectAnswer');
+            $table->increments('id');
+            $table->json('contentQuestion');
             $table->integer('level');
-            $table->uuid('questionBankId');
        
+            $table->uuid('uuid')->unique();
             $table->timestamps();
-            
-            $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
         });
     }
 

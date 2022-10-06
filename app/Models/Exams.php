@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Exams extends Model
 {
-    use HasFactory, Uuids, Notifiable;
+    use HasFactory, Notifiable;
     protected $table = 'exams';
 
     protected $fillable = [

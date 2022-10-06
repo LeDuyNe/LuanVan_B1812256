@@ -25,7 +25,8 @@ class CategoryController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $categorie = new CategoryResource(Category::findOrFail($validated_request['id']));
+        $categorieId = Category::where('uuid', $validated_request['id'])->pluck('id');
+        $categorie = new CategoryResource(Category::findOrFail($categorieId[0]));
 
         $this->setData($categorie);
         $this->setStatus('200');
@@ -37,49 +38,54 @@ class CategoryController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $name_category = Str::lower($validated_request['name']);
-        $userId = auth()->id();
+        $nameCategory = Str::lower($validated_request['name']);
+        $userId = auth()->id(); 
 
-        $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
+        $checkCategory = Category::where(['creatorId' => $userId, 'name' => $nameCategory])->first();
         if (!$checkCategory) {
             if (!empty($validated_request['note']) && empty($validated_request['isPublished'])) {
                 $category = Category::create([
-                    'name' => $name_category,
+                    'name' => $nameCategory,
                     'note' =>   $validated_request['note'],
-                    'creatorId' => $userId
+                    'creatorId' => $userId,
+                    'uuid' => Str::uuid()->toString()
                 ]);
-                $this->setData($category);
+                $this->setData(new CategoryResource($category));
             } elseif (empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
                 $category = Category::create([
-                    'name' => $name_category,
+                    'name' => $nameCategory,
                     'isPublished' =>   $validated_request['isPublished'],
-                    'creatorId' => $userId
+                    'creatorId' => $userId,
+                    'uuid' => Str::uuid()->toString()
                 ]);
-                $this->setData($category);
+                $this->setData(new CategoryResource($category));
             } elseif (!empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
                 $category = Category::create([
-                    'name' => $name_category,
+                    'name' => $nameCategory,
                     'note' =>   $validated_request['note'],
                     'isPublished' =>   $validated_request['isPublished'],
-                    'creatorId' => $userId
+                    'creatorId' => $userId,
+                    'uuid' => Str::uuid()->toString()
                 ]);
-                $this->setData($category);
+                // dd($category);
+                $this->setData(new CategoryResource($category));
             } else {
                 $category = Category::create([
-                    'name' => $name_category,
-                    'creatorId' => $userId
+                    'name' => $nameCategory,
+                    'creatorId' => $userId,
+                    'uuid' => Str::uuid()->toString()
                 ]);
-                $this->setData($category);
+                $this->setData(new CategoryResource($category));
             }
 
             $this->setStatus('200');
             $this->setMessage("Create category successfully.");
 
             return $this->respond();
+        }else{
+            $this->setStatus('400');
+            $this->setMessage("Category is existed");
         }
-        $this->setStatus('400');
-        $this->setMessage("Category is existed");
-
         return $this->respond();
     }
 
@@ -88,14 +94,15 @@ class CategoryController extends AbstractApiController
         $validated_request = $request->validated();
 
         $userId = auth()->id();
-
+        $categorieId = Category::where('uuid', $validated_request['id'])->pluck('id');
+        
         if (!empty($validated_request['name'])) {
-            $name_category = Str::lower($validated_request['name']);
-            $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
+            $nameCategory = Str::lower($validated_request['name']);
+            $checkCategory = Category::where(['creatorId' => $userId, 'name' => $nameCategory])->first();
 
             if (!$checkCategory) {
-                $category = Category::where('id', $validated_request['id'])->update($request->all());
-
+                Category::where('id', $categorieId[0])->update($validated_request);
+                // dd($Category[0]);
                 $this->setStatus('200');
                 $this->setMessage("Update category successfully.");
 
@@ -106,7 +113,7 @@ class CategoryController extends AbstractApiController
 
             return $this->respond();
         } else {
-            $category = Category::where('id', $validated_request['id'])->update($request->all());
+            Category::where('id', $categorieId[0])->update($validated_request);
             $this->setStatus('200');
             $this->setMessage("Update category successfully.");
 

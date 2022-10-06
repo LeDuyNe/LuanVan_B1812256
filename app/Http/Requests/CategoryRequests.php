@@ -26,7 +26,7 @@ class CategoryRequests extends FormRequest
         switch ($name) {
             case 'category.getCategorie':
                 return [
-                    'id' => ['required', 'string', 'exists:categories,id'],
+                    'id' => ['required', 'string', 'exists:categories,uuid'],
                 ];
                 break;
             case 'category.createCategory':
@@ -38,7 +38,7 @@ class CategoryRequests extends FormRequest
                 break;
             case 'category.updateCategory':
                 return [
-                    'id' => ['required', 'string', 'exists:categories,id'],
+                    'id' => ['required', 'string', 'exists:categories,uuid'],
                     'name' => ['string', 'nullable'],
                     'note' => ['string', 'nullable'],
                     'isPublished' => ['boolean', 'nullable'],
@@ -46,12 +46,12 @@ class CategoryRequests extends FormRequest
                 break;
             case 'category.deleteCategory':
                 return [
-                    'id' => ['required', 'string', 'exists:categories,id'],
+                    'id' => ['required', 'string', 'exists:categories,uuid'],
                 ];
                 break;
             case 'category.activeCategory':
                 return [
-                    'id' => ['required', 'string', 'exists:categories,id'],
+                    'id' => ['required', 'string', 'exists:categories,uuid'],
                 ];
                 break;
             default:
@@ -63,6 +63,7 @@ class CategoryRequests extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
+        $this->merge(['uuid' => $this->route('uuid')]);
     }
 
     protected function failedValidation(Validator $validator)

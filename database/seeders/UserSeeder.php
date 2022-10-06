@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => Hash::make('123456789'),
             'role' => '0',
+            'uuid' => Str::uuid()->toString()
         ]);
 
         User::create([
@@ -28,6 +29,7 @@ class UserSeeder extends Seeder
             'email' => 'pilB1812295@student.ctu.edu.vn',
             'password' => Hash::make('123456789'),
             'role' => '1',
+            'uuid' => Str::uuid()->toString()
         ]);
 
         User::create([
@@ -35,6 +37,7 @@ class UserSeeder extends Seeder
             'email' => 'duyB1812256@student.ctu.edu.vn',
             'password' => Hash::make('123456789'),
             'role' => '1',
+            'uuid' => Str::uuid()->toString()
         ]);
 
         User::create([
@@ -42,6 +45,7 @@ class UserSeeder extends Seeder
             'email' => 'duyB1812258@student.ctu.edu.vn',
             'password' => Hash::make('123456789'),
             'role' => '1',
+            'uuid' => Str::uuid()->toString()
         ]);
 
         User::create([
@@ -49,6 +53,7 @@ class UserSeeder extends Seeder
             'email' => 'duyB1812262@student.ctu.edu.vn',
             'password' => Hash::make('123456789'),
             'role' => '1',
+            'uuid' => Str::uuid()->toString()
         ]);
 
         for($i = 1; $i <= 10; $i++){
@@ -57,6 +62,7 @@ class UserSeeder extends Seeder
                 'email' => "user$i@student.ctu.edu.vn",
                 'password' => Hash::make('123456789'),
                 'role' => '2',
+                'uuid' => Str::uuid()->toString()
             ]);
         }
     }

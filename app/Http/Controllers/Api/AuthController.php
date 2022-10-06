@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class AuthController extends AbstractApiController
 {
@@ -19,7 +20,8 @@ class AuthController extends AbstractApiController
             'name' => $validated_request['name'],
             'email' => $validated_request['email'],
             'role' => 2,      //    Role (0) admin, (1) for teachers, (2) for students
-            'password' => Hash::make($validated_request['password'])
+            'password' => Hash::make($validated_request['password']),
+            'uuid' => Str::uuid()->toString()
         ]);
 
         $this->setData(new UserResource($user));

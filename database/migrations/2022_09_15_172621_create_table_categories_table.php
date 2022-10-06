@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTableCategoriesTable extends Migration
@@ -14,12 +15,13 @@ class CreateTableCategoriesTable extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->increments('id');
             $table->string('name');
             $table->string("note")->nullable();
             $table->boolean('isPublished')->default(0);
-            $table->uuid('creatorId');
-
+            $table->integer('creatorId')->unsigned();
+            $table->uuid('uuid')->unique();
+            
             $table->timestamps();
 
             $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
