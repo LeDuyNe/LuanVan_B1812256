@@ -7,8 +7,10 @@ use App\Http\Requests\QuestionBankRequests;
 use App\Http\Resources\QuestionBankResource;
 use App\Http\Resources\QuestionResource;
 use App\Models\Category;
+use App\Models\DetailQuestion;
 use App\Models\Question;
 use App\Models\QuestionBank;
+use App\Models\QuestionBank_Question;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -76,31 +78,53 @@ class QuestionBankController extends AbstractApiController
 
                 ]);
 
-                $levelEasy = 0;
-                $levelNormal = 0;
-                $levelDifficult = 0;
+                // $levelEasy = 0;
+                // $levelNormal = 0;
+                // $levelDifficult = 0;
 
-                foreach ($newQuizList as $question) {
-                    $content = $question['content'];
-                    $correctAnswer = $question['correctAnswer'];
-                    $inCorrectAnswer = $question['inCorrectAnswer'];
-                    $level = $question['level'];
-
-                    if ($level == 1) {
-                        $levelEasy++;
-                    } elseif ($level == 2) {
-                        $levelNormal++;
-                    } else {
-                        $levelDifficult++;
-                    }
+                foreach ($newQuizList as $content) {
+                    $content = $content['content'];
+                    $level = $content['level'];
 
                     $question = Question::create([
                         'content' => $content,
-                        'correctAnswer' => $correctAnswer,
-                        'inCorrectAnswer' => json_encode($inCorrectAnswer),
                         'level' => $level,
-                        'questionBankId' => $questionBank['id'],
                     ]);
+
+                    $questionBank_question = QuestionBank_Question::create([
+                        'questionBankId' => $questionBank['id'],
+                        'quesitonId' => $question['id'],
+                    ]);
+
+                    $contentCorrectAnswer = DetailQuestion::create([
+                        'content' => $content['correctAnswer'],
+                        'isCorrect' => 1,
+                        'questionId' => $question['id'],
+                    ]);
+
+                    foreach($content['inCorrectAnswer'] as $value){
+                        DetailQuestion::create([
+                       'content' => $value[0],
+                        'isCorrect' => 0,
+                        'questionId' => $question['id'],
+
+                    } 
+                    // 'questionBankId' => $questionBank['id'],
+                    // 'correctAnswer' => $correctAnswer,
+                    // 'inCorrectAnswer' => json_encode($inCorrectAnswer),
+                    // $correctAnswer = $question['correctAnswer'];
+                    // $inCorrectAnswer = $question['inCorrectAnswer'];
+ 
+
+                    // if ($level == 1) {
+                    //     $levelEasy++;
+                    // } elseif ($level == 2) {
+                    //     $levelNormal++;
+                    // } else {
+                    //     $levelDifficult++;
+                    // }
+
+
                 }
 
                 QuestionBank::where('id', $questionBank['id'])->where('creatorId', auth()->id())->update([

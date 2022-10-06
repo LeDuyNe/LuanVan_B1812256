@@ -16,14 +16,9 @@ class CreateTableQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('content');
-            $table->string('correctAnswer');
-            $table->json('inCorrectAnswer');
             $table->integer('level');
-            $table->uuid('questionBankId');
        
             $table->timestamps();
-            
-            $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
         });
     }
 

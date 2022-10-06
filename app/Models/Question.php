@@ -21,10 +21,7 @@ class Question extends Authenticatable
 
     protected $fillable = [
         'content',
-        'correctAnswer',
-        'inCorrectAnswer',
         'level',
-        'questionBankId',
       ];
 
     protected $casts = [

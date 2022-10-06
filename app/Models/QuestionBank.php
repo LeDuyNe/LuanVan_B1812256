@@ -4,17 +4,16 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class QuestionBank extends Model
+class QuestionBank extends Authenticatable
 {
     use HasFactory, Uuids, Notifiable;
     protected $table = 'questionbank';
 
     protected $fillable = [
         'name',
-        'info',
         'note',
         'categoryId',
         'creatorId',

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableCategoriesTable extends Migration
+class TableDetailQuestionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateTableCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('detail_question', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name')->unique();
-            $table->string("note")->nullable();
-            $table->boolean('isPublished')->default(0);
-            $table->uuid('creatorId');
-
+            $table->string('content');
+            $table->boolean('isCorrect');
+            $table->uuid('quesitonId');
             $table->timestamps();
 
-            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('quesitonId')->references('id')->on('questions')->onDelete('cascade');
         });
     }
 
@@ -33,6 +31,6 @@ class CreateTableCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categoriesç');
+        //
     }
 }
