@@ -17,7 +17,7 @@ class TableDetailQuestionTable extends Migration
             $table->uuid('id')->primary();
             $table->string('content');
             $table->boolean('isCorrect');
-            $table->uuid('quesitonId');
+            $table->uuid('questionId');
             $table->timestamps();
 
             $table->foreign('quesitonId')->references('id')->on('questions')->onDelete('cascade');

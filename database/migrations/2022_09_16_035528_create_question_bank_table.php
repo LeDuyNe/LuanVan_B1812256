@@ -17,7 +17,6 @@ class CreateQuestionBankTable extends Migration
         Schema::create('questionBank', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
-            $table->json('info')->nullable();
             $table->string('note')->nullable();
             $table->uuid('categoryId');
             $table->uuid('creatorId');

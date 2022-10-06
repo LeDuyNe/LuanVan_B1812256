@@ -10,7 +10,7 @@ use App\Models\Category;
 use App\Models\DetailQuestion;
 use App\Models\Question;
 use App\Models\QuestionBank;
-use App\Models\QuestionBank_Question;
+use App\Models\QuestionBank_Questions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -19,15 +19,22 @@ class QuestionBankController extends AbstractApiController
     public function getQuestionBank()
     {
         $questionsBankId = QuestionBank::where('creatorId', auth()->id())->get('id');
-
         $data = array();
+        $data_question = array();
         foreach ($questionsBankId as $questionBankId) {
+            // dd($questionBankId);
             $questionBank['general'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId['id'])->get());
-            $questionBank['questions'] = QuestionResource::collection(Question::where('questionBankId', $questionBankId['id'])->get());
-            array_push($data, $questionBank);
+            $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId['id'])->get('id');
+            foreach($questionsId as $questionId){
+                $content;
+                // $cacdapancuacauhoi;
+
+            }
+            // $questionBank['questions'] = QuestionResource::collection(Question::where('questionBankId', $questionBankId['id'])->get());
+            // array_push($data, $questionBank);
         }
 
-        $this->setData($data);
+        $this->setData($questionsId);
         $this->setStatus('200');
         $this->setMessage("List all exams");
 
@@ -54,7 +61,7 @@ class QuestionBankController extends AbstractApiController
 
         $categoryId = $validated_request['categoryId'];
         $nameQuestionBank = Str::lower($validated_request['name']);
-        $newQuizList = $validated_request['newQuizList'];
+        $quizList = $validated_request['newQuizList'];
         $note = NULL;
 
         if (!empty($validated_request['note'])) {
@@ -74,63 +81,37 @@ class QuestionBankController extends AbstractApiController
                     'name' => $nameQuestionBank,
                     'note' => $note,
                     'categoryId' => $categoryId,
-                    'creatorId' => Auth::id(),
-
+                    'creatorId' => $userId,
                 ]);
 
-                // $levelEasy = 0;
-                // $levelNormal = 0;
-                // $levelDifficult = 0;
-
-                foreach ($newQuizList as $content) {
-                    $content = $content['content'];
-                    $level = $content['level'];
+                foreach ($quizList as $quiz) {
+                    $content = $quiz['content'];
+                    $level = $quiz['level'];
 
                     $question = Question::create([
                         'content' => $content,
                         'level' => $level,
                     ]);
-
-                    $questionBank_question = QuestionBank_Question::create([
+               
+                    $questionBank_questions = QuestionBank_Questions::create([
                         'questionBankId' => $questionBank['id'],
                         'quesitonId' => $question['id'],
                     ]);
 
-                    $contentCorrectAnswer = DetailQuestion::create([
-                        'content' => $content['correctAnswer'],
+                    $correctAnswer = DetailQuestion::create([
+                        'content' => $quiz['correctAnswer'],
                         'isCorrect' => 1,
                         'questionId' => $question['id'],
                     ]);
-
-                    foreach($content['inCorrectAnswer'] as $value){
+          
+                    foreach($quiz['inCorrectAnswer'] as $quiz){
                         DetailQuestion::create([
-                       'content' => $value[0],
+                       'content' => $quiz,
                         'isCorrect' => 0,
                         'questionId' => $question['id'],
-
+                        ]);
                     } 
-                    // 'questionBankId' => $questionBank['id'],
-                    // 'correctAnswer' => $correctAnswer,
-                    // 'inCorrectAnswer' => json_encode($inCorrectAnswer),
-                    // $correctAnswer = $question['correctAnswer'];
-                    // $inCorrectAnswer = $question['inCorrectAnswer'];
- 
-
-                    // if ($level == 1) {
-                    //     $levelEasy++;
-                    // } elseif ($level == 2) {
-                    //     $levelNormal++;
-                    // } else {
-                    //     $levelDifficult++;
-                    // }
-
-
                 }
-
-                QuestionBank::where('id', $questionBank['id'])->where('creatorId', auth()->id())->update([
-                    "info" => ['easy'=> $levelEasy, 'normal' => $levelNormal, 'difficult' => $levelDifficult]
-                ]);
-
                 if ($question) {
                     $this->setData(new QuestionBankResource($questionBank));
                     $this->setMessage("Creat Exam is successfully !");

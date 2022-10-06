@@ -80,10 +80,11 @@ class ExamController extends AbstractApiController
         //     return $this->respond();
 
         // }else{
-        $checkNameExam = Exams::where(['creatorId' => $userId, 'name' => $name])->first();
-        if (!$checkNameExam) {
-            $arrayId = $this->getQuestionId($questionBankId, 2);
-
+        // $checkNameExam = Exams::where(['creatorId' => $userId, 'name' => $name])->first();
+        // if (!$checkNameExam) {
+        //     $arrayId = $this->getQuestionId($questionBankId, 2);
+        // toalQuestion = 20;
+        // while(totalQuestion)
             // $exam = Exams::create([
             //     'name' => $name_exam,
             //     'timeDuration' => $timeDuration,
