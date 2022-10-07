@@ -22,7 +22,7 @@ class QuestionBank_Questions extends Model
 
     protected $fillable = [
         'questionBankId',
-        'quesitonId',
+        'questionId',
     ];
 
 

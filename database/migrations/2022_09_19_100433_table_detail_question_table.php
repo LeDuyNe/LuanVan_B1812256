@@ -20,7 +20,7 @@ class TableDetailQuestionTable extends Migration
             $table->uuid('questionId');
             $table->timestamps();
 
-            $table->foreign('quesitonId')->references('id')->on('questions')->onDelete('cascade');
+            $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
         });
     }
 

@@ -17,12 +17,12 @@ class QuestionBankQuestionTable extends Migration
             Schema::create('questionBank_questions', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->uuid('questionBankId');
-                $table->uuid('quesitonId');
+                $table->uuid('questionId ');
                 $table->unique(['questionBankId', 'quesitonId']);
                 $table->timestamps();
     
                 $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
-                $table->foreign('quesitonId')->references('id')->on('questions')->onDelete('cascade');
+                $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
     
             });
         }
