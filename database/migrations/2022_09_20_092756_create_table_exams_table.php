@@ -22,12 +22,12 @@ class CreateTableExamsTable extends Migration
             $table->integer('countLimit');
             $table->string('note')->nullable();
             $table->boolean('isPublished')->default(0);  
-            $table->uuid('questionBank_question_id');
+            $table->uuid('questionBankId');
             $table->uuid('creatorId');
             
             $table->timestamps();
             
-            $table->foreign('questionBank_question_id')->references('id')->on('questionBank_questions')->onDelete('cascade');
+            $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
             $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
         });
     }

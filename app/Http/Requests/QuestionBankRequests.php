@@ -37,14 +37,14 @@ class QuestionBankRequests extends FormRequest
             case 'questionbank.adddQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],
-                    'newQuizList' => ['required', 'array'],
+                    'questionList' => ['required', 'array'],
                 ];
                 break;
             case 'questionbank.createQuestionBank':
                 return [
                     'categoryId' => ['required', 'string', 'exists:categories,id'],
                     'name' => ['required', 'string'],
-                    'newQuizList' => ['required', 'array'],
+                    'questionList' => ['required', 'array'],
                     'note' => ['string', 'nullable'],
                 ];
                 break;

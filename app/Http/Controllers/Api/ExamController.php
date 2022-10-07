@@ -58,7 +58,7 @@ class ExamController extends AbstractApiController
 
         $questionBankId = $validated_request['questionBankId'];
         $name = Str::lower($validated_request['name']);
-        $newQuizList = $validated_request['newQuizList'];
+        $questionList = $validated_request['questionList'];
         $timeDuration = $validated_request['timeDuration'];
         $timeStart =  gmdate("Y-m-d H:i:s", $validated_request['timeStart']);
         $countLimit = $validated_request['countLimit'];
@@ -66,6 +66,7 @@ class ExamController extends AbstractApiController
         $isPublished = 0;
         $userId = auth()->id();
 
+        dd($questionBankId);
         if (!empty($validated_request['note'])) {
             $note = $validated_request['note'];
         }
@@ -74,12 +75,6 @@ class ExamController extends AbstractApiController
             $isPublished = $validated_request['isPublished'];
         }
 
-        // $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();
-        // if(!$checkActiveCategory){
-        //     $this->setMessage("The category must be activated!");
-        //     return $this->respond();
-
-        // }else{
         // $checkNameExam = Exams::where(['creatorId' => $userId, 'name' => $name])->first();
         // if (!$checkNameExam) {
         //     $arrayId = $this->getQuestionId($questionBankId, 2);
@@ -121,11 +116,11 @@ class ExamController extends AbstractApiController
             //         }
             //     } else {
             //         $this->setMessage("Name of exam is existed!");
-            $this->setData($arrayId);
-            return $this->respond();
+            // $this->setData($arrayId);
+            // return $this->respond();
             //     }
             // }
-        }
+        // }
     }
 
     public function updateCategory(ExamRequests $request)

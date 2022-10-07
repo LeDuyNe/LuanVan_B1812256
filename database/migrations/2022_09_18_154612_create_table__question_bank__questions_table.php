@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class QuestionBankQuestionTable extends Migration
+class CreateTableQuestionBankQuestionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,18 +12,15 @@ class QuestionBankQuestionTable extends Migration
      * @return void
      */
     public function up()
-    {
-        {
+    { {
             Schema::create('questionBank_questions', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->uuid('questionBankId');
-                $table->uuid('questionId ');
-                $table->unique(['questionBankId', 'quesitonId']);
+                $table->uuid('questionId');
+                $table->unique(['questionBankId', 'questionId']);
                 $table->timestamps();
-    
                 $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
                 $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
-    
             });
         }
     }
@@ -35,6 +32,6 @@ class QuestionBankQuestionTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('table__question_bank__questions');
     }
 }

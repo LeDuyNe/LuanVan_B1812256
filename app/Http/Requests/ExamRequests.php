@@ -33,7 +33,7 @@ class ExamRequests extends FormRequest
                 return [
                     'questionBankId' => ['required', 'string', 'exists:questionBank,id'],
                     'name' => ['required', 'string'],
-                    'newQuizList' => ['required', 'array'],
+                    'questionList' => ['required', 'array'],
                     'timeDuration' => ['required', 'integer'],
                     'timeStart' => ['required', 'integer'],
                     'countLimit' => ['required', 'integer'],
