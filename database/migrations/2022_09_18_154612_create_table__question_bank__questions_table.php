@@ -13,13 +13,13 @@ class CreateTableQuestionBankQuestionsTable extends Migration
      */
     public function up()
     { {
-            Schema::create('questionBank_questions', function (Blueprint $table) {
+            Schema::create('questionbank_questions', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->uuid('questionBankId');
                 $table->uuid('questionId');
                 $table->unique(['questionBankId', 'questionId']);
                 $table->timestamps();
-                $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
+                $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
                 $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
             });
         }

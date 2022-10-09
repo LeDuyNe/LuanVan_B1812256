@@ -17,7 +17,7 @@ class QuestionBank_Questions extends Model
      *
      * @var array<int, string>
      */
-    protected $table = 'questionBank_questions';
+    protected $table = 'questionbank_questions';
     protected $primaryKey = 'id';
 
     protected $fillable = [

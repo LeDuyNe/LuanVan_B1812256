@@ -19,7 +19,7 @@ class TableAnswerTable extends Migration
             $table->uuid('resultId');
             $table->timestamps();
 
-            $table->foreign('chooseAnswerId')->references('id')->on('questionBank_questions')->onDelete('cascade');
+            $table->foreign('chooseAnswerId')->references('id')->on('questionbank_questions')->onDelete('cascade');
         });
     }
 

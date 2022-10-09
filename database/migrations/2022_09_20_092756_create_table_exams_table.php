@@ -27,7 +27,7 @@ class CreateTableExamsTable extends Migration
             
             $table->timestamps();
             
-            $table->foreign('questionBankId')->references('id')->on('questionBank')->onDelete('cascade');
+            $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
             $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
         });
     }
