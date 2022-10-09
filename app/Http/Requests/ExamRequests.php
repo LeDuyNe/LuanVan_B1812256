@@ -31,7 +31,7 @@ class ExamRequests extends FormRequest
                 break;
             case 'exam.createExam':
                 return [
-                    'questionBankId' => ['required', 'string', 'exists:questionBank,id'],
+                    'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
                     'name' => ['required', 'string'],
                     'questionList' => ['required', 'array'],
                     'timeDuration' => ['required', 'integer'],
