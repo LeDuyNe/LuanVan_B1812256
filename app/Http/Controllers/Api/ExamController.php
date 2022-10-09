@@ -10,47 +10,48 @@ use App\Models\Category;
 use App\Models\Exams;
 use App\Models\Question;
 use App\Models\QuestionBank;
+use App\Models\QuestionBank_Questions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 
 class ExamController extends AbstractApiController
 {
-    public function getExams()
-    {
-        // $exams = ExamResource::collection(Exams::where('creatorId', auth()->id())->get());
-        $examsId = Exams::where('creatorId', auth()->id())->get('id');
+    // public function getExams()
+    // {
+    //     // $exams = ExamResource::collection(Exams::where('creatorId', auth()->id())->get());
+    //     $examsId = Exams::where('creatorId', auth()->id())->get('id');
 
-        $data = array();
-        foreach ($examsId as $examId) {
-            $exam['general'] = ExamResource::collection(Exams::where('id', $examId['id'])->get());
-            $exam['questions'] = QuestionResource::collection(Question::where('examId', $examId['id'])->get());
-            array_push($data, $exam);
-        }
+    //     $data = array();
+    //     foreach ($examsId as $examId) {
+    //         $exam['general'] = ExamResource::collection(Exams::where('id', $examId['id'])->get());
+    //         $exam['questions'] = QuestionResource::collection(Question::where('examId', $examId['id'])->get());
+    //         array_push($data, $exam);
+    //     }
 
-        $this->setData($data);
-        $this->setStatus('200');
-        $this->setMessage("List all exams");
+    //     $this->setData($data);
+    //     $this->setStatus('200');
+    //     $this->setMessage("List all exams");
 
-        return $this->respond($examId);
-    }
+    //     return $this->respond($examId);
+    // }
 
-    public function getDetailExam(ExamRequests $request)
-    {
-        $validated_request = $request->validated();
-        $examId = $validated_request['id'];
+    // public function getDetailExam(ExamRequests $request)
+    // {
+    //     $validated_request = $request->validated();
+    //     $examId = $validated_request['id'];
 
-        $exam = ExamResource::collection(Exams::where('id', $examId)->get());
-        $questions = QuestionResource::collection(Question::where('examId', $examId)->get());
+    //     $exam = ExamResource::collection(Exams::where('id', $examId)->get());
+    //     $questions = QuestionResource::collection(Question::where('examId', $examId)->get());
 
-        $data['info'] = $exam;
-        $data['questions'] = $questions;
+    //     $data['info'] = $exam;
+    //     $data['questions'] = $questions;
 
-        $this->setData($data);
-        $this->setStatus('200');
-        $this->setMessage("Succefully !");
-        return $this->respond();
-    }
+    //     $this->setData($data);
+    //     $this->setStatus('200');
+    //     $this->setMessage("Succefully !");
+    //     return $this->respond();
+    // }
 
     public function createExam(ExamRequests $request)
     {
@@ -66,7 +67,6 @@ class ExamController extends AbstractApiController
         $isPublished = 0;
         $userId = auth()->id();
 
-        dd($questionBankId);
         if (!empty($validated_request['note'])) {
             $note = $validated_request['note'];
         }
@@ -74,8 +74,30 @@ class ExamController extends AbstractApiController
         if (!empty($validated_request['isPublished'])) {
             $isPublished = $validated_request['isPublished'];
         }
+        
+        $numEasy = $questionList['esay'];
+        $numNormal = $questionList['normal'];
+        $numDifficult = $questionList['difficult'];
 
-        // $checkNameExam = Exams::where(['creatorId' => $userId, 'name' => $name])->first();
+        $esay = 1;
+        $normal = 2;
+        $difficult = 2;
+
+        $arrayEsayQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $esay), $numEasy -1);
+        dd($arrayEsayQuestions);
+        $arrayNormalQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $normal), $numNormal - 1);
+      
+        $arrayDifficultQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $difficult), $numDifficult - 1);
+     
+
+        // dd($arrayDifficultQuestions);
+        // dd($arrayEsayQuestions);
+        // dd($arrayEsayQuestions);
+        // dd($normal);
+
+        // foreach($questionList as $question){
+        //     dd($question);
+        // }
         // if (!$checkNameExam) {
         //     $arrayId = $this->getQuestionId($questionBankId, 2);
         // toalQuestion = 20;
@@ -183,12 +205,21 @@ class ExamController extends AbstractApiController
     //     return $this->respond();
     // }
 
-    public function getQuestionId($id, $level){
-        $questionId =Question::where('questionBankId', $id)->where('level', $level)->get('id');
-        return $questionId;
+    public function getQuestionsId($questionBankId, $level){
+        $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId')->toArray();
+        $data = [];
+        foreach($questionsId as $questionId){
+            $levelQuestion = Question::where('id', $questionId)->pluck('level')->toArray();
+            if($level == $levelQuestion[0]){
+                array_push($data, $questionId);
+            }
+        }
+        dd($data[0]);
+        return $data;
     }
 
     public function randomQuestion($arrayId, $num){
-
+        $randomElement = array_rand($arrayId, $num);
+        return $randomElement;
     }
 }
