@@ -133,7 +133,7 @@ class QuestionBankController extends AbstractApiController
 
         $userId = auth()->id();
 
-        $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();
+        $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();  
         if (!$checkActiveCategory) {
             $this->setMessage("The category must be activated!");
             return $this->respond();

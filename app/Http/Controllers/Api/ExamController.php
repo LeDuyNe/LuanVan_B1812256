@@ -4,54 +4,117 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\ExamRequests;
+use App\Http\Resources\DetailQuestionResource;
 use App\Http\Resources\ExamResource;
 use App\Http\Resources\QuestionResource;
 use App\Models\Category;
+use App\Models\DetailQuestion;
 use App\Models\Exams;
 use App\Models\Question;
 use App\Models\QuestionBank;
 use App\Models\QuestionBank_Questions;
+use App\Models\Result;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 
 class ExamController extends AbstractApiController
 {
-    // public function getExams()
-    // {
-    //     // $exams = ExamResource::collection(Exams::where('creatorId', auth()->id())->get());
-    //     $examsId = Exams::where('creatorId', auth()->id())->get('id');
+    public function getExams()
+    {
+        $examsId = Exams::where('creatorId', auth()->id())->pluck('id')->toArray();
+        $data = array();
 
-    //     $data = array();
-    //     foreach ($examsId as $examId) {
-    //         $exam['general'] = ExamResource::collection(Exams::where('id', $examId['id'])->get());
-    //         $exam['questions'] = QuestionResource::collection(Question::where('examId', $examId['id'])->get());
-    //         array_push($data, $exam);
-    //     }
+        foreach ($examsId as $examId) {
+            $exam['main'] = ExamResource::collection(Exams::where('creatorId', auth()->id())->where('id', $examId)->get());
+            $questionsId = Exams::where('creatorId', auth()->id())->where('id', $examId)->pluck('arrayQuestion')->toArray();
+            $questionsId = json_decode($questionsId[0], true);
 
-    //     $this->setData($data);
-    //     $this->setStatus('200');
-    //     $this->setMessage("List all exams");
+            $easyQuestion = 0;
+            $normalQuestion = 0;
+            $difficultQuestion = 0;
 
-    //     return $this->respond($examId);
-    // }
+            foreach ($questionsId as $questionId) {
+                $levelQuestion = Question::where('id', $questionId)->pluck('level');
+                if ($levelQuestion[0] == 1) {
+                    $easyQuestion++;
+                } elseif ($levelQuestion[0]  == 2) {
+                    $normalQuestion++;
+                } else {
+                    $difficultQuestion++;
+                }
+            }
 
-    // public function getDetailExam(ExamRequests $request)
-    // {
-    //     $validated_request = $request->validated();
-    //     $examId = $validated_request['id'];
+            $totalQuestion = [
+                'esay'  => $easyQuestion,
+                'normal' => $normalQuestion,
+                'difficult' => $difficultQuestion,
+                'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
+            ];
 
-    //     $exam = ExamResource::collection(Exams::where('id', $examId)->get());
-    //     $questions = QuestionResource::collection(Question::where('examId', $examId)->get());
+            $exam['sub'] =  $totalQuestion;
+            array_push($data, $exam);
+        }
 
-    //     $data['info'] = $exam;
-    //     $data['questions'] = $questions;
+        $this->setData($data);
+        $this->setStatus('200');
+        $this->setMessage("List all exams");
 
-    //     $this->setData($data);
-    //     $this->setStatus('200');
-    //     $this->setMessage("Succefully !");
-    //     return $this->respond();
-    // }
+        return $this->respond();
+    }
+
+    public function getDetailExam(ExamRequests $request)
+    {
+        $validated_request = $request->validated();
+        $examId = $validated_request['id'];
+        
+        $data_question = array();
+        $data['general']['main'] = ExamResource::collection(Exams::where('creatorId', auth()->id())->where('id', $examId)->get());
+        
+        $questionsId = Exams::where('creatorId', auth()->id())->where('id', $examId)->pluck('arrayQuestion')->toArray();
+
+        $easyQuestion = 0;
+        $normalQuestion = 0;
+        $difficultQuestion = 0;
+        $questionsId = json_decode($questionsId[0], true);
+        foreach ($questionsId as $questionId) {
+            $question['content'] = QuestionResource::collection(Question::where('id', $questionId)->get());
+            $levelQuestion = Question::where('id', $questionId)->pluck('level');
+            if ($levelQuestion[0] == 1) {
+                $easyQuestion++;
+            } elseif ($levelQuestion[0]  == 2) {
+                $normalQuestion++;
+            } else {
+                $difficultQuestion++;
+            }
+
+            $data_detailQuestion = array();
+            $detailQuestionsId = DetailQuestion::where('questionId', $questionId)->pluck('id');
+            foreach ($detailQuestionsId as $detailQuestionId) {
+                $detailQuestion =  DetailQuestionResource::collection(DetailQuestion::where('id', $detailQuestionId)->get());
+                array_push($data_detailQuestion, $detailQuestion);
+            }
+
+            $question['answer'] = $data_detailQuestion;
+            array_push($data_question, $question);
+        }
+
+        $totalQuestion = [
+            'esay'  => $easyQuestion,
+            'normal' => $normalQuestion,
+            'difficult' => $difficultQuestion,
+            'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
+        ];
+
+        $data['general']['sub'] =  $totalQuestion;
+        $data['question'] = $data_question;
+
+
+        $this->setData($data);
+        $this->setStatus('200');
+        $this->setMessage("Succefully !");
+        return $this->respond();
+    }
 
     public function createExam(ExamRequests $request)
     {
@@ -74,76 +137,74 @@ class ExamController extends AbstractApiController
         if (!empty($validated_request['isPublished'])) {
             $isPublished = $validated_request['isPublished'];
         }
-        
+
         $numEasy = $questionList['esay'];
         $numNormal = $questionList['normal'];
         $numDifficult = $questionList['difficult'];
 
         $esay = 1;
         $normal = 2;
-        $difficult = 2;
+        $difficult = 3;
 
-        $arrayEsayQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $esay), $numEasy -1);
-        dd($arrayEsayQuestions);
-        $arrayNormalQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $normal), $numNormal - 1);
-      
-        $arrayDifficultQuestions = $this->randomQuestion($this->getQuestionsId($questionBankId, $difficult), $numDifficult - 1);
-     
+        $arrayQuestionsEasy = $this->getQuestionsId($questionBankId, $esay);
+        $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
+        $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
 
-        // dd($arrayDifficultQuestions);
-        // dd($arrayEsayQuestions);
-        // dd($arrayEsayQuestions);
-        // dd($normal);
+        $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
+        $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
+        $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
 
-        // foreach($questionList as $question){
-        //     dd($question);
-        // }
-        // if (!$checkNameExam) {
-        //     $arrayId = $this->getQuestionId($questionBankId, 2);
-        // toalQuestion = 20;
-        // while(totalQuestion)
-            // $exam = Exams::create([
-            //     'name' => $name_exam,
-            //     'timeDuration' => $timeDuration,
-            //     'timeStart' => $timeStart,
-            //     'countLimit' => $countLimit,
-            //     'note' => $note,
-            //     'isPublished' => $isPublished,
-            //     'categoryId' => $categoryId,
-            //     'creatorId' => Auth::id(),
+        $arrayQuestionsId = [];
+        if (is_array($randomQuestionEeasy) == true) {
+            foreach ($randomQuestionEeasy as $question) {
+                array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
+            }
+        } else {
+            array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
+        }
 
-            // ]);
+        if (is_array($randomQuestionNormal) == true) {
+            foreach ($randomQuestionNormal as $question) {
+                array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
+            }
+        } else {
+            array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
+        }
 
-            // foreach ($newQuizList as $quiz) {
-            //     $content = $quiz['content'];
-            //     $correctAnswer = $quiz['correctAnswer'];
-            //     $inCorrectAnswer = $quiz['inCorrectAnswer'];
-            //     $level = $quiz['level'];
 
-            //     $question = Question::create([
-            //         'content' => $content,
-            //         'correctAnswer' => $correctAnswer,
-            //         'inCorrectAnswer' => json_encode($inCorrectAnswer),
-            //         'level' => $level,
-            //         'examId' => $exam['id'],
-            //     ]);
-            // }
-            //         if ($question) {
-            //             $this->setData($exam);
-            //             $this->setMessage("Creat Exam is successfully !");
-            //             return $this->respond();
-            //         } else {
-            //             $this->setMessage("Creat Exam is fail !");
-            //             return $this->respond();
-            //         }
-            //     } else {
-            //         $this->setMessage("Name of exam is existed!");
-            // $this->setData($arrayId);
-            // return $this->respond();
-            //     }
-            // }
-        // }
+        if (is_array($randomQuestionDifficult) == true) {
+            foreach ($randomQuestionDifficult as $question) {
+                array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
+            }
+        } else {
+            array_push($arrayQuestionsId, $arrayQuestionsDifficult[$randomQuestionDifficult]);
+        }
+
+        $exam = Exams::create([
+            'name' => $name,
+            'arrayQuestion' => json_encode($arrayQuestionsId),
+            'timeDuration' => $timeDuration,
+            'timeStart' => $timeStart,
+            'countLimit' => $countLimit,
+            'note' => $note,
+            'isPublished' => $isPublished,
+            'questionBankId' => $questionBankId,
+            'creatorId' => Auth::id(),
+        ]);
+
+        if ($exam) {
+            $this->setData($exam);
+            $this->setMessage("Creat Exam is successfully !");
+            return $this->respond();
+        } else {
+            $this->setMessage("Creat Exam is fail !");
+            return $this->respond();
+        }
+
+        $this->setData($exam);
+        return $this->respond();
     }
+
 
     public function updateCategory(ExamRequests $request)
     {
@@ -168,57 +229,66 @@ class ExamController extends AbstractApiController
     }
 
 
-    // public function deleteExam(ExamRequests $request)
-    // {
-    //     $validated_request = $request->validated();
+    public function deleteExam(ExamRequests $request)
+    {
+        $validated_request = $request->validated();
 
-    //     $exam = Exams::FindOrFail($validated_request['id']);
+        $examId = $validated_request['id'];
+        $exam = Exams::FindOrFail($examId);
 
-    //     if ($exam->delete()) {
-    //         $this->setStatus('200');
-    //         $this->setMessage("Delete successfully");
+        $resultId = Result::where(['emxamId' =>  $examId])->pluck('id')->toArray();
 
-    //         return $this->respond();
-    //     }
-    //     $this->setMessage("Delete Failed");
+        if($resultId){
+            $this->setStatus('400');
+            $this->setMessage("Failed, you have to delete question bank before deleting a category!");
+            return $this->respond();
+        }else{
+            if ($exam->delete()) {
+                $this->setStatus('200');
+                $this->setMessage("Delete successfully");
+    
+                return $this->respond();
+            }
+            $this->setMessage("Delete Failed");
+        }
+        return $this->respond();
+    }
 
-    //     return $this->respond();
-    // }
+    public function activeExam(ExamRequests $request)
+    {
+        $validated_request = $request->validated();
 
-    // public function activeExam(ExamRequests $request)
-    // {
-    //     $validated_request = $request->validated();
+        $exam = Exams::where('id', $validated_request['id'])->where('creatorId', auth()->id())->update([
+            "isPublished" => 1
+        ]);
 
-    //     $exam = Exams::where('id', $validated_request['id'])->where('creatorId', auth()->id())->update([
-    //         "isPublished" => 1
-    //     ]);
+        if ($exam) {
+            $this->setStatus('200');
+            $this->setMessage("Active exam successfully!");
 
-    //     if ($exam) {
-    //         $this->setStatus('200');
-    //         $this->setMessage("Active exam successfully!");
+            return $this->respond();
+        }
+        $this->setStatus('400');
+        $this->setMessage("Active exam failed!");
 
-    //         return $this->respond();
-    //     }
-    //     $this->setStatus('400');
-    //     $this->setMessage("Active exam failed!");
+        return $this->respond();
+    }
 
-    //     return $this->respond();
-    // }
-
-    public function getQuestionsId($questionBankId, $level){
+    public function getQuestionsId($questionBankId, $level)
+    {
         $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId')->toArray();
         $data = [];
-        foreach($questionsId as $questionId){
+        foreach ($questionsId as $questionId) {
             $levelQuestion = Question::where('id', $questionId)->pluck('level')->toArray();
-            if($level == $levelQuestion[0]){
+            if ($level == $levelQuestion[0]) {
                 array_push($data, $questionId);
             }
         }
-        dd($data[0]);
         return $data;
     }
 
-    public function randomQuestion($arrayId, $num){
+    public function randomQuestion($arrayId, $num)
+    {
         $randomElement = array_rand($arrayId, $num);
         return $randomElement;
     }

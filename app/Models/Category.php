@@ -22,6 +22,7 @@ class Category extends Model
         'name',
         'note',
         'isPublished',
+        'color',
         'creatorId',
       ];
 

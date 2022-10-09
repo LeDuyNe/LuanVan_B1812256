@@ -17,13 +17,15 @@ class ExamResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'isPublished' => $this->isPublished,
+            'arrayQuestion' => $this->arrayQuestion,
             'timeDuration' => $this->timeDuration,
             'timeStart' => $this->timeStart,
             'countLimit' => $this->countLimit,
-            'categoryId' => $this->categoryId,
-            'creatorId' => $this->creatorId
-            // 'created_at' => (string)$this->created_at,
-            // 'updated_at' => $this->updated_at,
+            'questionBankId' => $this->questionBankId,
+            'creatorId' => $this->creatorId,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

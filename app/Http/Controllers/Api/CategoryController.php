@@ -47,6 +47,7 @@ class CategoryController extends AbstractApiController
                 $category = Category::create([
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -54,6 +55,7 @@ class CategoryController extends AbstractApiController
                 $category = Category::create([
                     'name' => $name_category,
                     'isPublished' =>   $validated_request['isPublished'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -62,12 +64,14 @@ class CategoryController extends AbstractApiController
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
                     'isPublished' =>   $validated_request['isPublished'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
             } else {
                 $category = Category::create([
                     'name' => $name_category,
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
