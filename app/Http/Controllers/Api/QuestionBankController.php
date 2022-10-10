@@ -201,53 +201,53 @@ class QuestionBankController extends AbstractApiController
         }
     }
 
-    public function adddQuestionBank(QuestionBankRequests $request)
-    {
-        $validated_request = $request->validated();
+    // public function adddQuestionBank(QuestionBankRequests $request)
+    // {
+    //     $validated_request = $request->validated();
 
-        $questionBankId = $validated_request['id'];
-        $quizList = $validated_request['newQuizList'];
-        $userId = auth()->id();
+    //     $questionBankId = $validated_request['id'];
+    //     $quizList = $validated_request['newQuizList'];
+    //     $userId = auth()->id();
 
-        $checkQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->first();
-        if ($checkQuestionBank) {
-            foreach ($quizList as $quiz) {
-                $content = $quiz['content'];
-                $level = $quiz['level'];
+    //     $checkQuestionBank = QuestionBank::where(['id' => $questionBankId, 'creatorId' => $userId])->first();
+    //     if ($checkQuestionBank) {
+    //         foreach ($quizList as $quiz) {
+    //             $content = $quiz['content'];
+    //             $level = $quiz['level'];
 
-                $question = Question::create([
-                    'content' => $content,
-                    'level' => $level,
-                ]);
+    //             $question = Question::create([
+    //                 'content' => $content,
+    //                 'level' => $level,
+    //             ]);
 
-                $questionBank_questions = QuestionBank_Questions::create([
-                    'questionBankId' => $questionBank['id'],
-                    'questionId' => $question['id'],
-                ]);
+    //             $questionBank_questions = QuestionBank_Questions::create([
+    //                 'questionBankId' => $questionBank['id'],
+    //                 'questionId' => $question['id'],
+    //             ]);
 
-                $correctAnswer = DetailQuestion::create([
-                    'content' => $quiz['correctAnswer'],
-                    'isCorrect' => 1,
-                    'questionId' => $question['id'],
-                ]);
+    //             $correctAnswer = DetailQuestion::create([
+    //                 'content' => $quiz['correctAnswer'],
+    //                 'isCorrect' => 1,
+    //                 'questionId' => $question['id'],
+    //             ]);
 
-                foreach ($quiz['inCorrectAnswer'] as $quiz) {
-                    DetailQuestion::create([
-                        'content' => $quiz,
-                        'isCorrect' => 0,
-                        'questionId' => $question['id'],
-                    ]);
-                }
-            }
-            if ($question) {
-                $this->setMessage("Add new questions is successfully !");
-                return $this->respond();
-            } else {
-                $this->setMessage("Add new questions is fail !");
-                return $this->respond();
-            }
-        }
-    }
+    //             foreach ($quiz['inCorrectAnswer'] as $quiz) {
+    //                 DetailQuestion::create([
+    //                     'content' => $quiz,
+    //                     'isCorrect' => 0,
+    //                     'questionId' => $question['id'],
+    //                 ]);
+    //             }
+    //         }
+    //         if ($question) {
+    //             $this->setMessage("Add new questions is successfully !");
+    //             return $this->respond();
+    //         } else {
+    //             $this->setMessage("Add new questions is fail !");
+    //             return $this->respond();
+    //         }
+    //     }
+    // }
 
     public function deleteQuestionBank(QuestionBankRequests $request)
     {
