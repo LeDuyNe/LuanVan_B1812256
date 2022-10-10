@@ -33,6 +33,7 @@ class CategoryRequests extends FormRequest
                 return [
                     'name' => ['string', 'required'],
                     'note' => ['string', 'nullable'],
+                    'color' => ['string', 'nullable'],
                     'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
@@ -41,6 +42,7 @@ class CategoryRequests extends FormRequest
                     'id' => ['required', 'string', 'exists:categories,id'],
                     'name' => ['string', 'nullable'],
                     'note' => ['string', 'nullable'],
+                    'color' => ['string', 'nullable'],
                     'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;

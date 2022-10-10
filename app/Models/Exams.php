@@ -14,10 +14,12 @@ class Exams extends Model
 
     protected $fillable = [
         'name',
+        'arrayQuestion',
         'timeDuration',
         'timeStart',
         'countLimit',
-        'categoryId',
+        'questionBankId',
+        'isPublished',
         'creatorId',
       ];
 

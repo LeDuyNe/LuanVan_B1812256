@@ -7,6 +7,7 @@ use App\Http\Requests\CategoryRequests;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Exams;
+use App\Models\QuestionBank;
 use Illuminate\Support\Str;
 
 class CategoryController extends AbstractApiController
@@ -46,6 +47,7 @@ class CategoryController extends AbstractApiController
                 $category = Category::create([
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -53,6 +55,7 @@ class CategoryController extends AbstractApiController
                 $category = Category::create([
                     'name' => $name_category,
                     'isPublished' =>   $validated_request['isPublished'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -61,12 +64,14 @@ class CategoryController extends AbstractApiController
                     'name' => $name_category,
                     'note' =>   $validated_request['note'],
                     'isPublished' =>   $validated_request['isPublished'],
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
             } else {
                 $category = Category::create([
                     'name' => $name_category,
+                    'color' =>   $validated_request['color'],
                     'creatorId' => $userId
                 ]);
                 $this->setData($category);
@@ -122,10 +127,10 @@ class CategoryController extends AbstractApiController
         $categoryId = $validated_request['id'];
         $category = Category::FindOrFail($categoryId);
  
-        $examId = Exams::where(['categoryId' =>  $categoryId])->pluck('id')->toArray();
-        if($examId){
+        $questionBankId = QuestionBank::where(['categoryId' =>  $categoryId])->pluck('id')->toArray();
+        if($questionBankId){
             $this->setStatus('400');
-            $this->setMessage("Failed, you have to delete exams before deleting a category!");
+            $this->setMessage("Failed, you have to delete question bank before deleting a category!");
             return $this->respond();
         }else{
             if ($category->delete()) {

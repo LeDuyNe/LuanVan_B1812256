@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
-class CreateQuestionBankTable extends Migration
+class CreateQuestionbank extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +13,7 @@ class CreateQuestionBankTable extends Migration
      */
     public function up()
     {
-        Schema::create('questionBank', function (Blueprint $table) {
+        Schema::create('questionbank', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('note')->nullable();
