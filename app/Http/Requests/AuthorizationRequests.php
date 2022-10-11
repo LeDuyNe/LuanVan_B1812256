@@ -39,9 +39,32 @@ class AuthorizationRequests extends FormRequest
                     'name' => 'string|required',
                     'email' => 'unique:users,email|string|email|required',
                     'password' => 'string|min:6|required',
-                    'avatar' => 'string|nullable',
+                    'avartar' => 'string|nullable',
                     'role' => 'integer|between:1,2|required',
                     // 're_password' => 'required|same:password'
+                ];
+                break;
+            case 'register':
+                return [
+                    'name' => 'string|required',
+                    'email' => 'unique:users,email|string|email|required',
+                    'password' => 'string|min:6|required',
+                    'avartar' => 'string|nullable',
+                    'role' => 'integer|between:1,2|required',
+                    // 're_password' => 'required|same:password'
+                ];
+                break;
+            case 'update-password':
+                return [
+                    'oldPassword' => 'string|min:6|required',
+                    'newPassword' => 'string|min:6|required'
+                ];
+                break;
+            case 'update-info':
+                return [
+                    'name' => 'string|nullable',
+                    'avartar' => 'string|nullable',
+                    'role' => 'integer|between:1,2|nullable'
                 ];
                 break;
             default:
