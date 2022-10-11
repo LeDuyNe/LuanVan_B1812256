@@ -24,8 +24,8 @@ class ExamResource extends JsonResource
             'countLimit' => $this->countLimit,
             'questionBankId' => $this->questionBankId,
             'creatorId' => $this->creatorId,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' =>  strtotime($this->created_at),
+            'updated_at' =>  strtotime($this->updated_at),
         ];
     }
 }

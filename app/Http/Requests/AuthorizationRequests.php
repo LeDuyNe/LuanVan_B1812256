@@ -31,7 +31,7 @@ class AuthorizationRequests extends FormRequest
             case 'login':
                 return [
                     'email' => 'string|email|required',
-                    'password' => 'string|min:6|required'
+                    'password' => 'string|min:6|required',
                 ];
                 break;
             case 'register':
@@ -39,7 +39,9 @@ class AuthorizationRequests extends FormRequest
                     'name' => 'string|required',
                     'email' => 'unique:users,email|string|email|required',
                     'password' => 'string|min:6|required',
-                    're_password' => 'required|same:password'
+                    'avatar' => 'string|nullable',
+                    'role' => 'integer|between:1,2|required',
+                    // 're_password' => 'required|same:password'
                 ];
                 break;
             default:

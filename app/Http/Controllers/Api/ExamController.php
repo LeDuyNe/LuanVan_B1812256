@@ -22,7 +22,7 @@ class ExamController extends AbstractApiController
 {
     public function getExams()
     {
-        $examsId = Exams::where('creatorId', auth()->id())->pluck('id')->toArray();
+        $examsId = Exams::where('creatorId', auth()->id())->orderBy('created_at', 'DESC')->pluck('id')->toArray();
         $data = array();
 
         foreach ($examsId as $examId) {
@@ -126,19 +126,10 @@ class ExamController extends AbstractApiController
         $timeDuration = $validated_request['timeDuration'];
         $timeStart =  gmdate("Y-m-d H:i:s", $validated_request['timeStart']);
         $countLimit = $validated_request['countLimit'];
-        $note = NULL;
-        $isPublished = 0;
-        $userId = auth()->id();
+        $note = $validated_request['note'] ?? null;
+        $isPublished = $validated_request['isPublished'] ?? 0;
 
-        if (!empty($validated_request['note'])) {
-            $note = $validated_request['note'];
-        }
-
-        if (!empty($validated_request['isPublished'])) {
-            $isPublished = $validated_request['isPublished'];
-        }
-
-        $numEasy = $questionList['esay'];
+        $numEasy = $questionList['easy'];
         $numNormal = $questionList['normal'];
         $numDifficult = $questionList['difficult'];
 

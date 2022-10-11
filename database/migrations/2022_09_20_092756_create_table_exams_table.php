@@ -16,7 +16,7 @@ class CreateTableExamsTable extends Migration
         Schema::create('exams', function (Blueprint $table) {
             $table->uuid('id')->primary();  
             $table->string('name');
-            $table->string("arrayQuestion");
+            $table->longText("arrayQuestion");
             $table->integer('timeDuration');
             $table->string('timeStart');
             $table->integer('countLimit');

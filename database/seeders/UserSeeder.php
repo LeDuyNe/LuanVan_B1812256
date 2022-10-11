@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
             'role' => '1',
         ]);
 
-        for($i = 1; $i <= 10; $i++){
+        for($i = 1; $i <= 5; $i++){
             User::create([
                 'name' => "student$i",
                 'email' => "user$i@student.ctu.edu.vn",

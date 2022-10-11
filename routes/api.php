@@ -31,7 +31,6 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
         Route::get('/users', [AdminController::class, 'getUsers']);
-        Route::post('/delegate/{id}', [AdminController::class, 'delegate'])->name("admin.delegate");
         Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name("admin.delete");
     });
 

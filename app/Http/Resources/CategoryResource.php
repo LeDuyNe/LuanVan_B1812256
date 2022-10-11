@@ -19,8 +19,9 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'note' => $this->note,
             'isPublished' => $this->isPublished,
-            'color' => $this->color
-            // 'creatorId' => $this->creatorId,
+            'color' => $this->color,
+            'created_at' =>  strtotime($this->created_at),
+            'updated_at' =>  strtotime($this->updated_at),
         ];
     }
 }

@@ -15,7 +15,7 @@ class TableDetailQuestionTable extends Migration
     {
         Schema::create('detail_question', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('content');
+            $table->longText('content');
             $table->boolean('isCorrect');
             $table->uuid('questionId');
             $table->timestamps();

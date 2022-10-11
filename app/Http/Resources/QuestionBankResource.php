@@ -19,9 +19,9 @@ class  QuestionBankResource extends JsonResource
             'name' => $this->name,
             'note' => $this->note,
             'categoryId' => $this->categoryId,
-            'creatorId' => $this->creatorId
-            // 'created_at' => (string)$this->created_at,
-            // 'updated_at' => $this->updated_at,
+            'creatorId' => $this->creatorId,
+            'created_at' =>  strtotime($this->created_at),
+            'updated_at' =>  strtotime($this->updated_at),
         ];
     }
 }

@@ -14,7 +14,7 @@ class CategoryController extends AbstractApiController
 {
     public function getCategories()
     {
-        $categories = CategoryResource::collection(Category::where('creatorId', auth()->id())->get());
+        $categories = CategoryResource::collection(Category::where('creatorId', auth()->id())->orderBy('created_at', 'DESC')->get());
         $this->setData($categories);
         $this->setStatus('200');
         $this->setMessage("List all categories");
@@ -43,48 +43,21 @@ class CategoryController extends AbstractApiController
 
         $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
         if (!$checkCategory) {
-            if (!empty($validated_request['note']) && empty($validated_request['isPublished'])) {
-                $category = Category::create([
-                    'name' => $name_category,
-                    'note' =>   $validated_request['note'],
-                    'color' =>   $validated_request['color'],
-                    'creatorId' => $userId
-                ]);
-                $this->setData($category);
-            } elseif (empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
-                $category = Category::create([
-                    'name' => $name_category,
-                    'isPublished' =>   $validated_request['isPublished'],
-                    'color' =>   $validated_request['color'],
-                    'creatorId' => $userId
-                ]);
-                $this->setData($category);
-            } elseif (!empty($validated_request['note']) && !empty($validated_request['isPublished'])) {
-                $category = Category::create([
-                    'name' => $name_category,
-                    'note' =>   $validated_request['note'],
-                    'isPublished' =>   $validated_request['isPublished'],
-                    'color' =>   $validated_request['color'],
-                    'creatorId' => $userId
-                ]);
-                $this->setData($category);
-            } else {
-                $category = Category::create([
-                    'name' => $name_category,
-                    'color' =>   $validated_request['color'],
-                    'creatorId' => $userId
-                ]);
-                $this->setData($category);
-            }
+            $category = Category::create([
+                'name' => $name_category,
+                'note' => $validated_request['note'] ?? null,
+                'isPublished' =>   $validated_request['isPublished']  ?? null,
+                'color' =>   $validated_request['color'] ?? null,
+                'creatorId' => $userId
+            ]);
 
+            $this->setData(new CategoryResource($category));
             $this->setStatus('200');
             $this->setMessage("Create category successfully.");
-
-            return $this->respond();
+        }else{
+            $this->setStatus('400');
+            $this->setMessage("Category is existed");
         }
-        $this->setStatus('400');
-        $this->setMessage("Category is existed");
-
         return $this->respond();
     }
 
@@ -126,21 +99,21 @@ class CategoryController extends AbstractApiController
 
         $categoryId = $validated_request['id'];
         $category = Category::FindOrFail($categoryId);
- 
+
         $questionBankId = QuestionBank::where(['categoryId' =>  $categoryId])->pluck('id')->toArray();
-        if($questionBankId){
+        if ($questionBankId) {
             $this->setStatus('400');
             $this->setMessage("Failed, you have to delete question bank before deleting a category!");
             return $this->respond();
-        }else{
+        } else {
             if ($category->delete()) {
                 $this->setStatus('200');
                 $this->setMessage("Delete successfully");
-    
+
                 return $this->respond();
             }
             $this->setMessage("Delete Failed");
-    
+
             return $this->respond();
         }
     }

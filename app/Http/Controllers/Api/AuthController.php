@@ -14,11 +14,11 @@ class AuthController extends AbstractApiController
     public function register(AuthorizationRequests $request)
     { 
         $validated_request = $request->validated();
-
         $user = User::create([
             'name' => $validated_request['name'],
             'email' => $validated_request['email'],
-            'role' => 2,      //    Role (0) admin, (1) for teachers, (2) for students
+            'avatar' => $validated_request['avatar'] ?? null,
+            'role' => $validated_request['role'],      //    Role (0) admin, (1) for teachers, (2) for students
             'password' => Hash::make($validated_request['password'])
         ]);
 

@@ -19,7 +19,7 @@ class QuestionBankController extends AbstractApiController
 {
     public function getQuestionBank()
     {
-        $questionsBankId = QuestionBank::where('creatorId', auth()->id())->get('id');
+        $questionsBankId = QuestionBank::where('creatorId', auth()->id())->orderBy('created_at', 'DESC')->get('id');
         $data = array();
 
         foreach ($questionsBankId as $questionBankId) {
@@ -246,7 +246,7 @@ class QuestionBankController extends AbstractApiController
         $questionBankId = $validated_request['id'];
         $questionBank = QuestionBank::FindOrFail($questionBankId);
 
-        $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId');
+        $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId')->toArray();
 
         if ($questionsId) {
             $this->setStatus('400');
