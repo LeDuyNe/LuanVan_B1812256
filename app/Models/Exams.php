@@ -18,8 +18,10 @@ class Exams extends Model
         'timeDuration',
         'timeStart',
         'countLimit',
-        'questionBankId',
+        'note',
+        'numExamiton',
         'isPublished',
+        'questionBankId',
         'creatorId',
       ];
 

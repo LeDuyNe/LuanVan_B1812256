@@ -128,6 +128,7 @@ class ExamController extends AbstractApiController
         $countLimit = $validated_request['countLimit'];
         $note = $validated_request['note'] ?? null;
         $isPublished = $validated_request['isPublished'] ?? 0;
+        $numExams = $validated_request['numExams'] ?? 1;
 
         $numEasy = $questionList['easy'];
         $numNormal = $questionList['normal'];
@@ -141,47 +142,58 @@ class ExamController extends AbstractApiController
         $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
         $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
 
-        $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
-        $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
-        $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
+        $numExamiton = rand(0, 99999);
+        $statusNumExamination = Exams::where('numExamiton', $numExamiton)->get();
+        
+        while(!$statusNumExamination){
+            $numExamiton = rand(0, 99999);
+            $statusNumExamination = Exams::where('numExamiton', $numExamiton)->get();
+        }   
 
-        $arrayQuestionsId = [];
-        if (is_array($randomQuestionEeasy) == true) {
-            foreach ($randomQuestionEeasy as $question) {
-                array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
+        for($i = 1; $i <= $numExams; $i++){
+            $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
+            $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
+            $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
+
+            $arrayQuestionsId = [];
+            if (is_array($randomQuestionEeasy) == true) {
+                foreach ($randomQuestionEeasy as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
             }
-        } else {
-            array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
-        }
-
-        if (is_array($randomQuestionNormal) == true) {
-            foreach ($randomQuestionNormal as $question) {
-                array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
+    
+            if (is_array($randomQuestionNormal) == true) {
+                foreach ($randomQuestionNormal as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
             }
-        } else {
-            array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
-        }
-
-
-        if (is_array($randomQuestionDifficult) == true) {
-            foreach ($randomQuestionDifficult as $question) {
-                array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
+    
+    
+            if (is_array($randomQuestionDifficult) == true) {
+                foreach ($randomQuestionDifficult as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsDifficult[$randomQuestionDifficult]);
             }
-        } else {
-            array_push($arrayQuestionsId, $arrayQuestionsDifficult[$randomQuestionDifficult]);
-        }
 
-        $exam = Exams::create([
-            'name' => $name,
-            'arrayQuestion' => json_encode($arrayQuestionsId),
-            'timeDuration' => $timeDuration,
-            'timeStart' => $timeStart,
-            'countLimit' => $countLimit,
-            'note' => $note,
-            'isPublished' => $isPublished,
-            'questionBankId' => $questionBankId,
-            'creatorId' => Auth::id(),
-        ]);
+            $exam = Exams::create([
+                'name' => $name,
+                'arrayQuestion' => json_encode($arrayQuestionsId),
+                'timeDuration' => $timeDuration,
+                'timeStart' => $timeStart,
+                'countLimit' => $countLimit,
+                'note' => $note,
+                'numExamiton' =>  $numExamiton,
+                'isPublished' => $isPublished,
+                'questionBankId' => $questionBankId,
+                'creatorId' => Auth::id(),
+            ]);
+        }
 
         if ($exam) {
             $this->setData($exam);

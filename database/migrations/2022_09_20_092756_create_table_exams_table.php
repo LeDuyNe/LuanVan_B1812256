@@ -21,6 +21,7 @@ class CreateTableExamsTable extends Migration
             $table->string('timeStart');
             $table->integer('countLimit');
             $table->string('note')->nullable();
+            $table->string('numExamination')->nullable();
             $table->boolean('isPublished')->default(0);  
             $table->uuid('questionBankId');
             $table->uuid('creatorId');

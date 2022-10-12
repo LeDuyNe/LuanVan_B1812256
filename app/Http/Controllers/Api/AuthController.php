@@ -53,7 +53,7 @@ class AuthController extends AbstractApiController
         if (!Hash::check($validated_request['oldPassword'], auth()->user()->password)) {
             $this->setStatus(400);
             $this->setMessage("Old Password doesn't match!");
-        }else{
+        } else {
             User::whereId(auth()->user()->id)->update([
                 'password' => Hash::make($validated_request['newPassword'])
             ]);
@@ -63,19 +63,28 @@ class AuthController extends AbstractApiController
         return $this->respond();
     }
 
-    public function updateInfo(AuthorizationRequests $request){
+    public function updateInfo(AuthorizationRequests $request)
+    {
         $validated_request = $request->validated();
 
-        $userId = auth()->id();
+        $oldName = User::where('id', auth()->user()->id)->pluck('name')->toArray();
+        $oldRole = $validated_request['role'] ?? User::where('id', auth()->user()->id)->pluck('role')->toArray();
+        $oldAvarta = User::where('id', auth()->user()->id)->pluck('avartar')->toArray();
+
+        $name = $validated_request['name'] ?? $oldName[0];
+        $role =  $validated_request['role'] ?? $oldRole[0];
+        $avartar =  $validated_request['avartar'] ?? $oldAvarta[0];
 
         $user = User::whereId(auth()->user()->id)->update([
-            $request->all()
+            'name' => $name,
+            'avartar' => $avartar,
+            'role' => $role,      //    Role (0) admin, (1) for teachers, (2) for students
         ]);
 
-        if($user){
+        if ($user) {
             $this->setStatus('200');
             $this->setMessage("Update information of user successfully.");
-        }else{
+        } else {
             $this->setStatus('400');
             $this->setMessage("Update information of user fail.");
         }

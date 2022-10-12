@@ -22,6 +22,7 @@ class ExamResource extends JsonResource
             'timeDuration' => $this->timeDuration,
             'timeStart' => $this->timeStart,
             'countLimit' => $this->countLimit,
+            'numExamiton' => $this->numExamiton,
             'questionBankId' => $this->questionBankId,
             'creatorId' => $this->creatorId,
             'created_at' =>  strtotime($this->created_at),

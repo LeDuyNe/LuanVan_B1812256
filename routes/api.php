@@ -69,7 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
-        Route::get('/', [ExamineesController::class, 'index']);
+        // Route::get('/', [ExamineesController::class, 'index']);
+        // Route::get('/', [ExamineesController::class, 'getExam'])->name("exam.getExams");
+        Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);

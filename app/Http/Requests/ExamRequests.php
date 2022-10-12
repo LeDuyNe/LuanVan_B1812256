@@ -38,6 +38,7 @@ class ExamRequests extends FormRequest
                     'timeStart' => ['required', 'integer'],
                     'countLimit' => ['required', 'integer'],
                     'note' => ['string', 'nullable'],
+                    'numExams' => ['nullable','integer'],
                     'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
