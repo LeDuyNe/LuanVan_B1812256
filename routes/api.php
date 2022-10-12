@@ -28,54 +28,108 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/error', [AuthController::class, 'permissionError'])->name('permission-error');
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/update', [AuthController::class, 'updateInfo'])->name('update-info');
-    Route::post('/change-password', [AuthController::class, 'updatePassword'])->name('update-password');
+Route::group([  
+    'middleware' => ['api', 'cors'],
+    'namespace' => $this->namespace,
+    'prefix' => 'api',
+], function ($router) {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/update', [AuthController::class, 'updateInfo'])->name('update-info');
+        Route::post('/change-password', [AuthController::class, 'updatePassword'])->name('update-password');
 
-    Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
-        Route::get('/users', [AdminController::class, 'getUsers']);
-        Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name("admin.delete");
-    });
-
-    Route::group(['prefix' => 'creator', 'middleware' => ['creator']], function () {
-        Route::get('/', [CreatorController::class, 'index']);
-        Route::group(['prefix' => 'category'], function () {
-            Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
-            Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
-            Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
-            Route::put('/active/{id}', [CategoryController::class, 'activeCategory'])->name("category.activeCategory");
-            Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
-            Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
+        Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+            Route::get('/users', [AdminController::class, 'getUsers']);
+            Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name("admin.delete");
         });
 
-        Route::group(['prefix' => 'questionbank'], function () {
-            Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
-            Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
-            Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
-            Route::post('/add/{id}', [QuestionBankController::class, 'adddQuestionBank'])->name("questionbank.adddQuestionBank");
-            // Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
-            Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
-            Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
+        Route::group(['prefix' => 'creator', 'middleware' => ['creator']], function () {
+            Route::get('/', [CreatorController::class, 'index']);
+            Route::group(['prefix' => 'category'], function () {
+                Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
+                Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
+                Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
+                Route::put('/active/{id}', [CategoryController::class, 'activeCategory'])->name("category.activeCategory");
+                Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
+                Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
+            });
+
+            Route::group(['prefix' => 'questionbank'], function () {
+                Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
+                Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
+                Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
+                Route::post('/add/{id}', [QuestionBankController::class, 'adddQuestionBank'])->name("questionbank.adddQuestionBank");
+                // Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
+                Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
+                Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
+            });
+
+            Route::group(['prefix' => 'exam'], function () {
+                Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
+                Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
+                Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+                Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+                Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+                Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+            });
         });
 
-        Route::group(['prefix' => 'exam'], function () {
-            Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
-            Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
-            Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
-            Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
-            Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
-            Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+        Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
+            // Route::get('/', [ExamineesController::class, 'index']);
+            // Route::get('/', [ExamineesController::class, 'getExam'])->name("exam.getExams");
+            Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
         });
-    });
 
-    Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
-        // Route::get('/', [ExamineesController::class, 'index']);
-        // Route::get('/', [ExamineesController::class, 'getExam'])->name("exam.getExams");
-        Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
-
-    Route::post('/logout', [AuthController::class, 'logout']);
 });
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::post('/update', [AuthController::class, 'updateInfo'])->name('update-info');
+//     Route::post('/change-password', [AuthController::class, 'updatePassword'])->name('update-password');
+
+//     Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+//         Route::get('/users', [AdminController::class, 'getUsers']);
+//         Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name("admin.delete");
+//     });
+
+//     Route::group(['prefix' => 'creator', 'middleware' => ['creator']], function () {
+//         Route::get('/', [CreatorController::class, 'index']);
+//         Route::group(['prefix' => 'category'], function () {
+//             Route::get('/', [CategoryController::class, 'getCategories'])->name("category.getCategories");
+//             Route::get('/{id}', [CategoryController::class, 'getCategorie'])->name("category.getCategorie");
+//             Route::post('/create', [CategoryController::class, 'createCategory'])->name("category.createCategory");
+//             Route::put('/active/{id}', [CategoryController::class, 'activeCategory'])->name("category.activeCategory");
+//             Route::patch('/update/{id}', [CategoryController::class, 'updateCategory'])->name("category.updateCategory");
+//             Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name("category.deleteCategory");
+//         });
+
+//         Route::group(['prefix' => 'questionbank'], function () {
+//             Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
+//             Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
+//             Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
+//             Route::post('/add/{id}', [QuestionBankController::class, 'adddQuestionBank'])->name("questionbank.adddQuestionBank");
+//             // Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
+//             Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
+//             Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
+//         });
+
+//         Route::group(['prefix' => 'exam'], function () {
+//             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
+//             Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
+//             Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+//             Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+//             Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+//             Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+//         });
+//     });
+
+//     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
+//         // Route::get('/', [ExamineesController::class, 'index']);
+//         // Route::get('/', [ExamineesController::class, 'getExam'])->name("exam.getExams");
+//         Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
+//     });
+
+//     Route::post('/logout', [AuthController::class, 'logout']);
+// });
 
 
 // Route::resource('examinfo','ExaminfoController');
