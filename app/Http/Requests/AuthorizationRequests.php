@@ -40,16 +40,7 @@ class AuthorizationRequests extends FormRequest
                     'email' => 'unique:users,email|string|email|required',
                     'password' => 'string|min:6|required',
                     'avartar' => 'string|nullable',
-                    'role' => 'integer|between:1,2|required',
-                    // 're_password' => 'required|same:password'
-                ];
-                break;
-            case 'register':
-                return [
-                    'name' => 'string|required',
-                    'email' => 'unique:users,email|string|email|required',
-                    'password' => 'string|min:6|required',
-                    'avartar' => 'string|nullable',
+                    'nameTitle' => 'string|nullable',
                     'role' => 'integer|between:1,2|required',
                     // 're_password' => 'required|same:password'
                 ];
@@ -64,6 +55,7 @@ class AuthorizationRequests extends FormRequest
                 return [
                     'name' => 'string|nullable',
                     'avartar' => 'string|nullable',
+                    'nameTitle' => 'string|nullable',
                     'role' => 'integer|between:1,2|nullable'
                 ];
                 break;
