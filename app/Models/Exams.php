@@ -19,7 +19,7 @@ class Exams extends Model
         'timeStart',
         'countLimit',
         'note',
-        'numExamiton',
+        'numExamination',
         'isPublished',
         'questionBankId',
         'creatorId',

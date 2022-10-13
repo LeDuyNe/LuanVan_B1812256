@@ -51,6 +51,7 @@ class QuestionBankController extends AbstractApiController
             $questionBank['sub'] =  $totalQuestion;
             array_push($data, $questionBank);
         }
+
         $this->setData($data);
         $this->setStatus('200');
         $this->setMessage("List all exams");
@@ -105,15 +106,15 @@ class QuestionBankController extends AbstractApiController
 
         $questionBank['general']['sub'] =  $totalQuestion;
         $questionBank['question'] = $data_question;
+
         if ($questionBank) {
             $this->setData($questionBank);
             $this->setStatus('200');
             $this->setMessage("Get QuestionBank succesfully !");
         } else {
-            $this->setStatus('200');
+            $this->setStatus('400');
             $this->setMessage("Get QuestionBank failed !");
         }
-
 
         return $this->respond();
     }
@@ -125,18 +126,13 @@ class QuestionBankController extends AbstractApiController
         $categoryId = $validated_request['categoryId'];
         $nameQuestionBank = Str::lower($validated_request['name']);
         $quizList = $validated_request['questionList'];
-        $note = NULL;
-
-        if (!empty($validated_request['note'])) {
-            $note = $validated_request['note'];
-        }
-
+        $note = $validated_request['note'] ?? null;
         $userId = auth()->id();
 
         $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();
         if (!$checkActiveCategory) {
+            $this->setStatus('400');
             $this->setMessage("The category must be activated!");
-            return $this->respond();
         } else {
             $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->first();
             if (!$checkQuestionBank) {
@@ -175,19 +171,21 @@ class QuestionBankController extends AbstractApiController
                         ]);
                     }
                 }
+
                 if ($question) {
                     $this->setData(new QuestionBankResource($questionBank));
+                    $this->setStatus('200');
                     $this->setMessage("Creat Exam is successfully !");
-                    return $this->respond();
                 } else {
+                    $this->setStatus('400');
                     $this->setMessage("Creat Exam is fail !");
-                    return $this->respond();
                 }
             } else {
+                $this->setStatus('400');
                 $this->setMessage("Name of exam is existed!");
-                return $this->respond();
             }
         }
+        return $this->respond();
     }
 
     public function adddQuestionBank(QuestionBankRequests $request)
@@ -229,14 +227,13 @@ class QuestionBankController extends AbstractApiController
                 }
             }
 
-            if ($question) {
-                $this->setMessage("Add new questions is successfully !");
-                return $this->respond();
-            } else {
-                $this->setMessage("Add new questions is fail !");
-                return $this->respond();
-            }
+            $this->setStatus('200');
+            $this->setMessage("Add new questions is successfully !");
+        } else {
+            $this->setStatus('400');
+            $this->setMessage("Add new questions is failed !");
         }
+        return $this->respond();
     }
 
     public function deleteQuestionBank(QuestionBankRequests $request)
@@ -251,18 +248,16 @@ class QuestionBankController extends AbstractApiController
         if ($questionsId) {
             $this->setStatus('400');
             $this->setMessage("Failed, you have to delete all questions belong question bank before deleting it");
-            return $this->respond();
         } else {
             if ($questionBank->delete()) {
                 $this->setStatus('200');
                 $this->setMessage("Delete successfully");
-
-                return $this->respond();
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Delete Failed");
             }
-            $this->setMessage("Delete Failed");
-
-            return $this->respond();
         }
+        return $this->respond();
     }
 
     public function deleteQuestion(QuestionBankRequests $request)
@@ -285,10 +280,10 @@ class QuestionBankController extends AbstractApiController
             }
 
             $this->setStatus('200');
-            $this->setMessage("Delete successfully");
+            $this->setMessage("Delete successfully !");
         } else {
             $this->setStatus('400');
-            $this->setMessage("Delete fail");
+            $this->setMessage("Delete failed !");
         }
 
         return $this->respond();

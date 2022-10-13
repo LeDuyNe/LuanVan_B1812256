@@ -14,6 +14,7 @@ use App\Models\Question;
 use App\Models\QuestionBank;
 use App\Models\QuestionBank_Questions;
 use App\Models\Result;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -67,15 +68,16 @@ class ExamController extends AbstractApiController
     {
         $validated_request = $request->validated();
         $examId = $validated_request['id'];
-        
+
         $data_question = array();
         $data['general']['main'] = ExamResource::collection(Exams::where('creatorId', auth()->id())->where('id', $examId)->get());
-        
+
         $questionsId = Exams::where('creatorId', auth()->id())->where('id', $examId)->pluck('arrayQuestion')->toArray();
 
         $easyQuestion = 0;
         $normalQuestion = 0;
         $difficultQuestion = 0;
+
         $questionsId = json_decode($questionsId[0], true);
         foreach ($questionsId as $questionId) {
             $question['content'] = QuestionResource::collection(Question::where('id', $questionId)->get());
@@ -112,7 +114,7 @@ class ExamController extends AbstractApiController
 
         $this->setData($data);
         $this->setStatus('200');
-        $this->setMessage("Succefully !");
+        $this->setMessage("Get exam succefully !");
         return $this->respond();
     }
 
@@ -124,7 +126,7 @@ class ExamController extends AbstractApiController
         $name = Str::lower($validated_request['name']);
         $questionList = $validated_request['questionList'];
         $timeDuration = $validated_request['timeDuration'];
-        $timeStart =  gmdate("Y-m-d H:i:s", $validated_request['timeStart']);
+        $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
         $countLimit = $validated_request['countLimit'];
         $note = $validated_request['note'] ?? null;
         $isPublished = $validated_request['isPublished'] ?? 0;
@@ -142,15 +144,15 @@ class ExamController extends AbstractApiController
         $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
         $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
 
-        $numExamiton = rand(0, 99999);
-        $statusNumExamination = Exams::where('numExamiton', $numExamiton)->get();
-        
-        while(!$statusNumExamination){
-            $numExamiton = rand(0, 99999);
-            $statusNumExamination = Exams::where('numExamiton', $numExamiton)->get();
-        }   
+        $numExamination = rand(0, 99999);
+        $statusNumExamination = Exams::where('numExamination', $numExamination)->get();
 
-        for($i = 1; $i <= $numExams; $i++){
+        while (!$statusNumExamination) {
+            $numExamination = rand(0, 99999);
+            $statusNumExamination = Exams::where('numExamination', $numExamination)->get();
+        }
+
+        for ($i = 1; $i <= $numExams; $i++) {
             $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
             $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
             $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
@@ -163,7 +165,7 @@ class ExamController extends AbstractApiController
             } else {
                 array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
             }
-    
+
             if (is_array($randomQuestionNormal) == true) {
                 foreach ($randomQuestionNormal as $question) {
                     array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
@@ -171,8 +173,8 @@ class ExamController extends AbstractApiController
             } else {
                 array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
             }
-    
-    
+
+
             if (is_array($randomQuestionDifficult) == true) {
                 foreach ($randomQuestionDifficult as $question) {
                     array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
@@ -188,7 +190,7 @@ class ExamController extends AbstractApiController
                 'timeStart' => $timeStart,
                 'countLimit' => $countLimit,
                 'note' => $note,
-                'numExamiton' =>  $numExamiton,
+                'numExamination' =>  $numExamination,
                 'isPublished' => $isPublished,
                 'questionBankId' => $questionBankId,
                 'creatorId' => Auth::id(),
@@ -197,14 +199,13 @@ class ExamController extends AbstractApiController
 
         if ($exam) {
             $this->setData($exam);
+            $this->setStatus('200');
             $this->setMessage("Creat Exam is successfully !");
-            return $this->respond();
         } else {
+            $this->setStatus('400');
             $this->setMessage("Creat Exam is fail !");
-            return $this->respond();
         }
 
-        $this->setData($exam);
         return $this->respond();
     }
 
@@ -231,7 +232,6 @@ class ExamController extends AbstractApiController
         // return $this->respond();
     }
 
-
     public function deleteExam(ExamRequests $request)
     {
         $validated_request = $request->validated();
@@ -241,18 +241,17 @@ class ExamController extends AbstractApiController
 
         $resultId = Result::where(['emxamId' =>  $examId])->pluck('id')->toArray();
 
-        if($resultId){
+        if ($resultId) {
             $this->setStatus('400');
             $this->setMessage("Failed, you have to delete question bank before deleting a category!");
-            return $this->respond();
-        }else{
+        } else {
             if ($exam->delete()) {
                 $this->setStatus('200');
                 $this->setMessage("Delete successfully");
-    
-                return $this->respond();
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Delete Failed");
             }
-            $this->setMessage("Delete Failed");
         }
         return $this->respond();
     }
@@ -268,12 +267,10 @@ class ExamController extends AbstractApiController
         if ($exam) {
             $this->setStatus('200');
             $this->setMessage("Active exam successfully!");
-
-            return $this->respond();
+        } else {
+            $this->setStatus('400');
+            $this->setMessage("Active exam failed!");
         }
-        $this->setStatus('400');
-        $this->setMessage("Active exam failed!");
-
         return $this->respond();
     }
 

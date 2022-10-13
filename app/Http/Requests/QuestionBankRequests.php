@@ -48,12 +48,12 @@ class QuestionBankRequests extends FormRequest
                     'note' => ['string', 'nullable'],
                 ];
                 break;
-            case 'questionbank.updateQuestionBank':
-                return [
-                    // 'id' => ['required', 'string', 'exists:categories,id'],
-                    // 'name' => 'string|required',
-                ];
-                break;
+                // case 'questionbank.updateQuestionBank':
+                //     return [
+                // 'id' => ['required', 'string', 'exists:categories,id'],
+                // 'name' => 'string|required',
+                // ];
+                // break;
             case 'questionbank.deleteQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],

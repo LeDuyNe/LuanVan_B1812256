@@ -20,6 +20,7 @@ class CreateTableUsersTable extends Migration
             $table->string('password');
             $table->string('avartar')->nullable();
             $table->integer('role')->nullable();
+            $table->string('nameTitle')->nullable();
         
             $table->timestamps();
         });
