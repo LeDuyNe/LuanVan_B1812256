@@ -7,8 +7,6 @@ use App\Http\Controllers\AbstractApiController;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
-
 class AuthController extends AbstractApiController
 {
     public function register(AuthorizationRequests $request)

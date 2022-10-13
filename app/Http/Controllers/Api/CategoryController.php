@@ -6,7 +6,6 @@ use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\CategoryRequests;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Models\Exams;
 use App\Models\QuestionBank;
 use Illuminate\Support\Str;
 
@@ -14,8 +13,9 @@ class CategoryController extends AbstractApiController
 {
     public function getCategories()
     {
-        $categories = CategoryResource::collection(Category::where('creatorId', auth()->id())->orderBy('created_at', 'DESC')->get());
-        $this->setData($categories);
+        $categories = Category::where('creatorId', auth()->id())->orderBy('created_at', 'DESC')->get();
+
+        $this->setData(CategoryResource::collection($categories));
         $this->setStatus('200');
         $this->setMessage("List all categories");
 
@@ -30,6 +30,7 @@ class CategoryController extends AbstractApiController
 
         $this->setData($categorie);
         $this->setStatus('200');
+        $this->setMessage("Get category is successfully !");
 
         return $this->respond();
     }
@@ -54,10 +55,11 @@ class CategoryController extends AbstractApiController
             $this->setData(new CategoryResource($category));
             $this->setStatus('200');
             $this->setMessage("Create category successfully.");
-        }else{
+        } else {
             $this->setStatus('400');
             $this->setMessage("Category is existed");
         }
+
         return $this->respond();
     }
 
@@ -76,20 +78,16 @@ class CategoryController extends AbstractApiController
 
                 $this->setStatus('200');
                 $this->setMessage("Update category successfully.");
-
-                return $this->respond();
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Category is existed");
             }
-            $this->setStatus('400');
-            $this->setMessage("Category is existed");
-
-            return $this->respond();
         } else {
             $category = Category::where('id', $validated_request['id'])->update($request->all());
             $this->setStatus('200');
             $this->setMessage("Update category successfully.");
-
-            return $this->respond();
         }
+        return $this->respond();
     }
 
 
@@ -104,18 +102,16 @@ class CategoryController extends AbstractApiController
         if ($questionBankId) {
             $this->setStatus('400');
             $this->setMessage("Failed, you have to delete question bank before deleting a category!");
-            return $this->respond();
         } else {
             if ($category->delete()) {
                 $this->setStatus('200');
                 $this->setMessage("Delete successfully");
-
-                return $this->respond();
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Delete Failed");
             }
-            $this->setMessage("Delete Failed");
-
-            return $this->respond();
         }
+        return $this->respond();
     }
 
     public function activeCategory(CategoryRequests $request)
@@ -129,11 +125,10 @@ class CategoryController extends AbstractApiController
         if ($category) {
             $this->setStatus('200');
             $this->setMessage("Active category successfully!");
-
-            return $this->respond();
+        } else {
+            $this->setStatus('400');
+            $this->setMessage("Active category failed!");
         }
-        $this->setStatus('400');
-        $this->setMessage("Active category failed!");
 
         return $this->respond();
     }

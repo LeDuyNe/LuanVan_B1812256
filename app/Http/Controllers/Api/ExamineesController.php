@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AbstractApiController;
+use App\Http\Middleware\Examinees;
 use App\Http\Requests\ExamineesRequests;
 use App\Http\Resources\DetailQuestionResource;
 use App\Http\Resources\ExamResource;
 use App\Http\Resources\QuestionResource;
+use App\Models\Answer;
 use App\Models\DetailQuestion;
+use App\Models\Examinee;
 use App\Models\Exams;
 use App\Models\Question;
 use Carbon\Carbon;
@@ -17,9 +20,9 @@ class ExamineesController extends AbstractApiController
     public function getExam(ExamineesRequests $request)
     {
         $validated_request = $request->validated();
-        $numExamiton = $validated_request['id'];
+        $numExamination = $validated_request['id'];
 
-        $arrayExamsId = Exams::where('numExamiton', $numExamiton)->pluck('id')->toArray();
+        $arrayExamsId = Exams::where('numExamination', $numExamination)->pluck('id')->toArray();
         $randomElement = array_rand($arrayExamsId, 1);
         $examId = $arrayExamsId[$randomElement];
 
@@ -31,7 +34,7 @@ class ExamineesController extends AbstractApiController
             $data['general']['main'] = ExamResource::collection(Exams::where('id', $examId)->get());
 
             $questionsId = Exams::where('id', $examId)->pluck('arrayQuestion')->toArray();
-      
+
             $easyQuestion = 0;
             $normalQuestion = 0;
             $difficultQuestion = 0;
@@ -71,13 +74,45 @@ class ExamineesController extends AbstractApiController
 
             $this->setData($data);
             $this->setStatus('200');
-            $this->setMessage("Succefully !");
-        }else{
+            $this->setMessage("Get exam succefully !");
+        } else {
             $this->setStatus('400');
-            $this->setMessage("Fail !");
+            $this->setMessage("It's not time for an exam !");
         }
 
         return $this->respond();
+    }
+
+    public function submitExam(ExamineesRequests $request)
+    {
+        $validated_request = $request->validated();
+        $restTime = $validated_request['restTime'];
+        $emxamId = $validated_request['emxamId'];
+        $examineeId = auth()->id();
+        $answerIds = $validated_request['answerIds'];
+
+        $result = Examinee::create([
+            'restTime' => $restTime,
+            'examineeId' => $examineeId,
+            'emxamId' =>   $emxamId,
+        ]);
+
+        $numTrueAnswer = 0;
+        foreach ($answerIds as $answerId) {
+            $answer = Answer::create([
+                'answerId' => $answerId,
+                'resultId' => $result->id(),
+            ]);
+
+            $isCorrect = DetailQuestion::where('id', $answerId)->pluck('isCorrect')->toArray();
+            if($isCorrect == 1){
+                $numTrueAnswer ++;
+            }
+        }
+
+        // $result = Examinee::update([
+        //     "isPublished" => 1
+        // ]);
     }
 
     public function randomQuestion($arrayId, $num)

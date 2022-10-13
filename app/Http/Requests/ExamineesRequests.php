@@ -31,7 +31,7 @@ class ExamineesRequests extends FormRequest
         switch ($name) {
             case 'examinees.getExam':
                 return [
-                    'id' => ['required', 'integer', 'exists:exams,numExamiton'],
+                    'id' => ['required', 'integer', 'exists:exams,numExamination'],
                 ];
                 break;
             // case 'exam.deleteExam':
@@ -48,7 +48,7 @@ class ExamineesRequests extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
-        $this->merge(['id' => $this->route('numExamiton')]);
+        // $this->merge(['id' => $this->route('numExamiton')]);
     }
 
     protected function failedValidation(Validator $validator)
