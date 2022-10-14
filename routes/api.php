@@ -68,6 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
+        Route::get('/result', [ExamineesController::class, 'getResult'])->name("examinees.getResult");
+        Route::get('/result/{id}', [ExamineesController::class, 'getDetailResult'])->name("examinees.getDetailResult");
+        Route::post('/submit', [ExamineesController::class, 'submitExam'])->name("examinees.submitExam");
         Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
     });
 

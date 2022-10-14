@@ -34,11 +34,18 @@ class ExamineesRequests extends FormRequest
                     'id' => ['required', 'integer', 'exists:exams,numExamination'],
                 ];
                 break;
-            // case 'exam.deleteExam':
-            //     return [
-            //         'id' => ['required', 'string', 'exists:exams,id'],
-            //     ];
-            //     break;
+            case 'examinees.getDetailResult':
+                return [
+                        'id' => ['required', 'string', 'exists:result,id'],
+                ];
+                    break;
+            case 'examinees.submitExam':
+                return [
+                    'examId' => ['required', 'string', 'exists:exams,id'],
+                    'restTime' => ['nullable', 'integer'],
+                    'answerIds' => ['required', 'array'],
+                ];
+                break;
             default:
                 return [];
                 break;
@@ -48,7 +55,6 @@ class ExamineesRequests extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge(['id' => $this->route('id')]);
-        // $this->merge(['id' => $this->route('numExamiton')]);
     }
 
     protected function failedValidation(Validator $validator)

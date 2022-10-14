@@ -15,12 +15,12 @@ class CreateTableResultTable extends Migration
     {
         Schema::create('result', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->integer('score')->nullable();
+            $table->string('numCorrect')->nullable();
             $table->integer('restTime')->nullable();
             $table->uuid('examineeId');
-            $table->uuid('emxamId');
+            $table->uuid('examId');
             $table->foreign('examineeId')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('emxamId')->references('id')->on('exams')->onDelete('cascade');
+            $table->foreign('examId')->references('id')->on('exams')->onDelete('cascade');
 
             $table->timestamps();
         });
