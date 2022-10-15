@@ -17,9 +17,9 @@ class QuestionResource extends JsonResource
         return[
             'id' => $this->id,
             'content' => $this->content,
-            'content' => $this->content,
-            'level' => $this->level
-            // 'creatorId' => $this->creatorId,
+            'level' => $this->level,
+            'top_question_ids' => $this->top_question_ids,
+            'bottom_question_ids' => $this->bottom_question_ids,
         ];
     }
 }

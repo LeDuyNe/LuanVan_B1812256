@@ -19,7 +19,7 @@ class ResultResource extends JsonResource
             'numCorrect' => $this->numCorrect,
             'restTime' => $this->restTime,
             'examineeId ' => $this->examineeId ,
-            'examId ' => $this->examId ,
+            'questionBankId ' => $this->questionBankId ,
             'dateSubmit' =>  strtotime($this->created_at),
         ];
     }

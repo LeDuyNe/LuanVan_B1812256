@@ -15,6 +15,12 @@ class QuestionBank extends Authenticatable
     protected $fillable = [
         'name',
         'note',
+        'numExamination',
+        'timeDuration',
+        'timeStart',
+        'countLimit',
+        'isPublished',
+        'structureExam',
         'categoryId',
         'creatorId',
       ];

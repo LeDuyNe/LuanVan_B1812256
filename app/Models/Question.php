@@ -22,6 +22,8 @@ class Question extends Authenticatable
     protected $fillable = [
         'content',
         'level',
+        'top_question_ids',
+        'bottom_question_ids'
       ];
 
     protected $casts = [

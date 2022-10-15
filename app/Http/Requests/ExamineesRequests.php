@@ -31,7 +31,7 @@ class ExamineesRequests extends FormRequest
         switch ($name) {
             case 'examinees.getExam':
                 return [
-                    'id' => ['required', 'integer', 'exists:exams,numExamination'],
+                    'id' => ['required', 'integer', 'exists:questionbank,numExamination'],
                 ];
                 break;
             case 'examinees.getDetailResult':
@@ -41,7 +41,7 @@ class ExamineesRequests extends FormRequest
                     break;
             case 'examinees.submitExam':
                 return [
-                    'examId' => ['required', 'string', 'exists:exams,id'],
+                    'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
                     'restTime' => ['nullable', 'integer'],
                     'answerIds' => ['required', 'array'],
                 ];

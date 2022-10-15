@@ -13,24 +13,24 @@ class CreateTableExamsTable extends Migration
      */
     public function up()
     {
-        Schema::create('exams', function (Blueprint $table) {
-            $table->uuid('id')->primary();  
-            $table->string('name');
-            $table->longText("arrayQuestion");
-            $table->integer('timeDuration');
-            $table->string('timeStart');
-            $table->integer('countLimit');
-            $table->string('note')->nullable();
-            $table->string('numExamination')->nullable();
-            $table->boolean('isPublished')->default(0);  
-            $table->uuid('questionBankId');
-            $table->uuid('creatorId');
+        // Schema::create('exams', function (Blueprint $table) {
+        //     $table->uuid('id')->primary();  
+        //     $table->string('name');
+        //     $table->longText("arrayQuestion");
+        //     $table->integer('timeDuration');
+        //     $table->string('timeStart');
+        //     $table->integer('countLimit');
+        //     $table->string('note')->nullable();
+        //     $table->string('numExamination')->nullable();
+        //     $table->boolean('isPublished')->default(0);  
+        //     $table->uuid('questionBankId');
+        //     $table->uuid('creatorId');
             
-            $table->timestamps();
+        //     $table->timestamps();
             
-            $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
-            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
-        });
+        //     $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
+        //     $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
+        // });
     }
 
     /**
@@ -40,6 +40,6 @@ class CreateTableExamsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('examinfos');
+        // Schema::dropIfExists('examinfos');
     }
 }

@@ -12,6 +12,7 @@ use App\Models\DetailQuestion;
 use App\Models\Question;
 use App\Models\QuestionBank;
 use App\Models\QuestionBank_Questions;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -127,6 +128,11 @@ class QuestionBankController extends AbstractApiController
         $nameQuestionBank = Str::lower($validated_request['name']);
         $quizList = $validated_request['questionList'];
         $note = $validated_request['note'] ?? null;
+        $timeDuration = $validated_request['timeDuration'];
+        $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
+        $countLimit = $validated_request['countLimit'];
+        $isPublished = $validated_request['isPublished'] ?? 0;
+        $structureExam = $validated_request['structureExam'];
         $userId = auth()->id();
 
         $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();
@@ -135,26 +141,44 @@ class QuestionBankController extends AbstractApiController
             $this->setMessage("The category must be activated!");
         } else {
             $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->first();
+            
+            $numExamination = rand(0, 99999);
+            $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
+    
+            while (!$statusNumExamination) {
+                $numExamination = rand(0, 99999);
+                $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
+            }
             if (!$checkQuestionBank) {
                 $questionBank = QuestionBank::create([
                     'name' => $nameQuestionBank,
                     'note' => $note,
+                    'numExamination' =>  $numExamination,
+                    'timeDuration' => $timeDuration,
+                    'timeStart' => $timeStart,
+                    'countLimit' => $countLimit,
+                    'isPublished' => $isPublished,
+                    'structureExam' =>  json_encode($structureExam),
                     'categoryId' => $categoryId,
-                    'creatorId' => $userId,
+                    'creatorId' => Auth::id(),
                 ]);
 
                 foreach ($quizList as $quiz) {
                     $content = $quiz['content'];
                     $level = $quiz['level'];
-
+                    $top_question_ids = json_encode($quiz['top_question_ids']);
+                    $bottom_question_ids = json_encode($quiz['bottom_question_ids']);
+    
                     $question = Question::create([
                         'content' => $content,
                         'level' => $level,
+                        'top_question_ids' => $top_question_ids,
+                        'bottom_question_ids' => $bottom_question_ids
                     ]);
 
                     $questionBank_questions = QuestionBank_Questions::create([
                         'questionBankId' => $questionBank['id'],
-                        'questionId' => $question['id'],
+                        'questionId' => $question['id']
                     ]);
 
                     $correctAnswer = DetailQuestion::create([
@@ -201,10 +225,14 @@ class QuestionBankController extends AbstractApiController
             foreach ($quizList as $quiz) {
                 $content = $quiz['content'];
                 $level = $quiz['level'];
+                $top_question_ids = json_encode($quiz['top_question_ids']);
+                $bottom_question_ids = json_encode($quiz['bottom_question_ids']);
 
                 $question = Question::create([
                     'content' => $content,
                     'level' => $level,
+                    'top_question_ids' => $top_question_ids,
+                    'bottom_question_ids' => $bottom_question_ids
                 ]);
 
                 $questionBank_questions = QuestionBank_Questions::create([

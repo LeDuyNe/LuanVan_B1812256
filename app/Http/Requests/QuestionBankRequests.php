@@ -46,6 +46,12 @@ class QuestionBankRequests extends FormRequest
                     'name' => ['required', 'string'],
                     'questionList' => ['required', 'array'],
                     'note' => ['string', 'nullable'],
+                    'timeDuration' => ['required', 'integer'],
+                    'timeStart' => ['required', 'integer'],
+                    'countLimit' => ['required', 'integer'],
+                    'note' => ['string', 'nullable'],
+                    'structureExam' => ['required','array'],
+                    'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
                 // case 'questionbank.updateQuestionBank':

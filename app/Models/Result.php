@@ -18,7 +18,7 @@ class Result extends Model
         'numCorrect',
         'restTime',
         'examineeId',
-        'examId',
+        'questionBankId',
       ];
 
       protected $casts = [

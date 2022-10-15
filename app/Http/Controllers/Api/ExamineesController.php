@@ -7,6 +7,7 @@ use App\Http\Middleware\Examinees;
 use App\Http\Requests\ExamineesRequests;
 use App\Http\Resources\DetailQuestionResource;
 use App\Http\Resources\ExamResource;
+use App\Http\Resources\QuestionBankResource;
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\ResultResource;
 use App\Models\Answer;
@@ -14,6 +15,8 @@ use App\Models\DetailQuestion;
 use App\Models\Examinee;
 use App\Models\Exams;
 use App\Models\Question;
+use App\Models\QuestionBank;
+use App\Models\QuestionBank_Questions;
 use App\Models\Result;
 use Carbon\Carbon;
 
@@ -24,44 +27,67 @@ class ExamineesController extends AbstractApiController
         $validated_request = $request->validated();
         $numExamination = $validated_request['id'];
 
-        $arrayExamsId = Exams::where('numExamination', $numExamination)->pluck('id')->toArray();
-        $randomElement = array_rand($arrayExamsId, 1);
-        $examId = $arrayExamsId[$randomElement];
+        $questionBankId = QuestionBank::where('numExamination', $numExamination)->pluck('id')->toArray();
 
-        $isPublish =  Exams::where('id', $examId)->pluck('isPublished')->toArray();
-        $timeStart = Exams::where('id', $examId)->pluck('timeStart')->toArray();
-        $countLimit = Exams::where('id', $examId)->pluck('countLimit')->toArray();
+        $isPublish =  QuestionBank::where('id', $questionBankId)->pluck('isPublished')->toArray();
+        $timeStart = QuestionBank::where('id', $questionBankId)->pluck('timeStart')->toArray();
+        $countLimit = QuestionBank::where('id', $questionBankId)->pluck('countLimit')->toArray();
+        $structureExam = QuestionBank::where('id', $questionBankId)->pluck('structureExam')->toArray();
+        $structureExam = json_decode($structureExam[0], true);
         $examineeId = auth()->id();
 
         $countLimitExam = 0;
-        foreach ($arrayExamsId as $id) {
-            $exitResult = Result::where("examineeId", $examineeId)->where("examId", $id)->pluck('id')->toArray();
-            $countLimitExam += count($exitResult);
-        }
+        $exitResult = Result::where("examineeId", $examineeId)->where("questionBankId", $questionBankId)->pluck('id')->toArray();
+        $countLimitExam += count($exitResult);
 
         if ($isPublish[0] == 1 && $timeStart[0] <= Carbon::now()) {
             if ($countLimitExam < $countLimit[0]) {
                 $data_question = array();
-                $data['general']['main'] = ExamResource::collection(Exams::where('id', $examId)->get());
+                $data['general'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId)->get());
 
-                $questionsId = Exams::where('id', $examId)->pluck('arrayQuestion')->toArray();
+                $numEasy = $structureExam['easy'];
+                $numNormal = $structureExam['normal'];
+                $numDifficult = $structureExam['difficult'];
 
-                $easyQuestion = 0;
-                $normalQuestion = 0;
-                $difficultQuestion = 0;
-                $questionsId = json_decode($questionsId[0], true);
+                $esay = 1;
+                $normal = 2;
+                $difficult = 3;
 
-                foreach ($questionsId as $questionId) {
-                    $question['content'] = QuestionResource::collection(Question::where('id', $questionId)->get());
-                    $levelQuestion = Question::where('id', $questionId)->pluck('level');
-                    if ($levelQuestion[0] == 1) {
-                        $easyQuestion++;
-                    } elseif ($levelQuestion[0]  == 2) {
-                        $normalQuestion++;
-                    } else {
-                        $difficultQuestion++;
+                $arrayQuestionsEasy = $this->getQuestionsId($questionBankId, $esay);
+                $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
+                $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
+
+                $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
+                $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
+                $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
+
+                $arrayQuestionsId = [];
+                if (is_array($randomQuestionEeasy) == true) {
+                    foreach ($randomQuestionEeasy as $question) {
+                        array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
                     }
+                } else {
+                    array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
+                }
 
+                if (is_array($randomQuestionNormal) == true) {
+                    foreach ($randomQuestionNormal as $question) {
+                        array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
+                    }
+                } else {
+                    array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
+                }
+
+                if (is_array($randomQuestionDifficult) == true) {
+                    foreach ($randomQuestionDifficult as $question) {
+                        array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
+                    }
+                } else {
+                    array_push($arrayQuestionsId, $arrayQuestionsDifficult[$randomQuestionDifficult]);
+                }
+
+                $question = [];
+                foreach ($arrayQuestionsId as $questionId) {
                     $data_detailQuestion = array();
                     $detailQuestionsId = DetailQuestion::where('questionId', $questionId)->pluck('id');
                     foreach ($detailQuestionsId as $detailQuestionId) {
@@ -69,19 +95,15 @@ class ExamineesController extends AbstractApiController
                         array_push($data_detailQuestion, $detailQuestion);
                     }
 
-                    $question['answer'] = $data_detailQuestion;
+                    $question = ([
+                        'content' => QuestionResource::collection(Question::where('id', $questionId)->get()),
+                        'answer' => $data_detailQuestion
+                    ]);
+
                     array_push($data_question, $question);
                 }
 
-                $totalQuestion = [
-                    'esay'  => $easyQuestion,
-                    'normal' => $normalQuestion,
-                    'difficult' => $difficultQuestion,
-                    'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
-                ];
-
-                $data['general']['sub'] =  $totalQuestion;
-                $data['question'] = $data_question;
+                $data['sub'] = $data_question;
 
                 $this->setData($data);
                 $this->setStatus('200');
@@ -146,19 +168,21 @@ class ExamineesController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $restTime = $validated_request['restTime'];
-        $examId = $validated_request['examId'];
+        $restTime = $validated_request['restTime'] ?? 0;
+        $questionBankId = $validated_request['questionBankId'];
         $examineeId = auth()->id();
         $answersId = $validated_request['answerIds'];
 
         $result = Result::create([
             'restTime' => $restTime,
             'examineeId' => $examineeId,
-            'examId' =>   $examId,
+            'questionBankId' =>   $questionBankId,
         ]);
 
         $numTrueAnswer = 0;
-        $totalQuestion = 0;
+        $structureExam = QuestionBank::where('id', $questionBankId)->pluck('structureExam')->toArray();
+        $structureExam = json_decode($structureExam[0], true);
+        $totalQuestion = $structureExam['easy'] + $structureExam['normal'] + $structureExam['difficult'];
         $resultId =  $result['id'];
 
         foreach ($answersId as $answerId) {
@@ -171,8 +195,6 @@ class ExamineesController extends AbstractApiController
             if ($isCorrect[0] == 1) {
                 $numTrueAnswer++;
             }
-
-            $totalQuestion++;
         }
 
         $result = Result::where("id", $result['id'])
@@ -191,6 +213,19 @@ class ExamineesController extends AbstractApiController
         }
 
         return $this->respond();
+    }
+
+    public function getQuestionsId($questionBankId, $level)
+    {
+        $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId')->toArray();
+        $data = [];
+        foreach ($questionsId as $questionId) {
+            $levelQuestion = Question::where('id', $questionId)->pluck('level')->toArray();
+            if ($level == $levelQuestion[0]) {
+                array_push($data, $questionId);
+            }
+        }
+        return $data;
     }
 
     public function randomQuestion($arrayId, $num)

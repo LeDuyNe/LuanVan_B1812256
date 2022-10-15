@@ -18,11 +18,12 @@ class CreateTableResultTable extends Migration
             $table->string('numCorrect')->nullable();
             $table->integer('restTime')->nullable();
             $table->uuid('examineeId');
-            $table->uuid('examId');
-            $table->foreign('examineeId')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('examId')->references('id')->on('exams')->onDelete('cascade');
+            $table->uuid('questionBankId');
 
             $table->timestamps();
+
+            $table->foreign('examineeId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
         });
     }
 

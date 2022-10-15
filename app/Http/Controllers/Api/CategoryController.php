@@ -39,7 +39,7 @@ class CategoryController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
-        $name_category = Str::lower($validated_request['name']);
+        $name_category = $validated_request['name'];
         $userId = auth()->id();
 
         $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
@@ -67,15 +67,17 @@ class CategoryController extends AbstractApiController
     {
         $validated_request = $request->validated();
 
+        $categoryId = $validated_request['id'];
         $userId = auth()->id();
 
         if (!empty($validated_request['name'])) {
             $name_category = Str::lower($validated_request['name']);
-            $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
+            $categoryExitId = Category::where(['creatorId' => $userId, 'name' => $name_category])->pluck('id')->toArray();
+      
+            if ($categoryExitId[0] == $categoryId) {
+                $category = Category::where('id', $categoryId)->update($request->all());
 
-            if (!$checkCategory) {
-                $category = Category::where('id', $validated_request['id'])->update($request->all());
-
+                $this->setData(new CategoryResource(Category::findOrFail($categoryId)));
                 $this->setStatus('200');
                 $this->setMessage("Update category successfully.");
             } else {
@@ -83,7 +85,9 @@ class CategoryController extends AbstractApiController
                 $this->setMessage("Category is existed");
             }
         } else {
-            $category = Category::where('id', $validated_request['id'])->update($request->all());
+            $category = Category::where('id', $categoryId)->update($request->all());
+            
+            $this->setData(new CategoryResource(Category::findOrFail($categoryId)));
             $this->setStatus('200');
             $this->setMessage("Update category successfully.");
         }

@@ -57,20 +57,20 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
         });
 
-        Route::group(['prefix' => 'exam'], function () {
-            Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
-            Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
-            Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
-            Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
-            Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
-            Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
-        });
+        // Route::group(['prefix' => 'exam'], function () {
+        //     Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
+        //     Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
+            // Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+        //     Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+        //     Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+        //     Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+        // });
     });
 
     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
+        Route::post('/submit', [ExamineesController::class, 'submitExam'])->name("examinees.submitExam");
         Route::get('/result', [ExamineesController::class, 'getResult'])->name("examinees.getResult");
         Route::get('/result/{id}', [ExamineesController::class, 'getDetailResult'])->name("examinees.getDetailResult");
-        Route::post('/submit', [ExamineesController::class, 'submitExam'])->name("examinees.submitExam");
         Route::get('/{id}', [ExamineesController::class, 'getExam'])->name("examinees.getExam");
     });
 

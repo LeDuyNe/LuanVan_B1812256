@@ -18,7 +18,9 @@ class CreateQuestionbankQuestions extends Migration
             $table->uuid('questionBankId');
             $table->uuid('questionId');
             $table->unique(['questionBankId', 'questionId']);
+            
             $table->timestamps();
+
             $table->foreign('questionBankId')->references('id')->on('questionbank')->onDelete('cascade');
             $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
         });
