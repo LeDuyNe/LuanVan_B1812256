@@ -49,19 +49,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::group(['prefix' => 'questionbank'], function () {
             Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
-            Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
+            Route::post('/update/question', [QuestionBankController::class, 'updateQuestion'])->name("questionbank.updateQuestion");
+            Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
             Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
             Route::post('/add/{id}', [QuestionBankController::class, 'adddQuestionBank'])->name("questionbank.adddQuestionBank");
-            // Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
+            Route::post('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
+            Route::put('/active/{id}', [QuestionBankController::class, 'activeQuestionBank'])->name("questionbank.activeQuestionBank");
             Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
-            Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
+            Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
         });
 
         // Route::group(['prefix' => 'exam'], function () {
         //     Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
         //     Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
             // Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
-        //     Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+            // Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
         //     Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
         //     Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         // });

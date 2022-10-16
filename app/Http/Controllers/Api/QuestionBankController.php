@@ -141,10 +141,10 @@ class QuestionBankController extends AbstractApiController
             $this->setMessage("The category must be activated!");
         } else {
             $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->first();
-            
+
             $numExamination = rand(0, 99999);
             $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
-    
+
             while (!$statusNumExamination) {
                 $numExamination = rand(0, 99999);
                 $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
@@ -168,7 +168,7 @@ class QuestionBankController extends AbstractApiController
                     $level = $quiz['level'];
                     $top_question_ids = json_encode($quiz['top_question_ids']);
                     $bottom_question_ids = json_encode($quiz['bottom_question_ids']);
-    
+
                     $question = Question::create([
                         'content' => $content,
                         'level' => $level,
@@ -261,6 +261,136 @@ class QuestionBankController extends AbstractApiController
             $this->setStatus('400');
             $this->setMessage("Add new questions is failed !");
         }
+        return $this->respond();
+    }
+
+    public function updateQuestionBank(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionBankId = $validated_request['id'];
+        $userId = auth()->id();
+        $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
+
+        if (!empty($validated_request['name'])) {
+            $name_questionBank = Str::lower($validated_request['name']);
+            $questionBankExitId = QuestionBank::where(['creatorId' => $userId, 'name' => $name_questionBank])->pluck('id')->toArray();
+            if ($questionBankExitId[0] == $questionBankId) {
+                $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
+                if (!empty($validated_request['timeStart'])) {
+                    $questionBank = QuestionBank::where('id', $questionBankId)->update([
+                        "timeStart" => $timeStart
+                    ]);
+                }
+                $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
+                $this->setStatus('200');
+                $this->setMessage("Update question bank successfully.");
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Name question bank is existed");
+            }
+        } else {
+            $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
+            if (!empty($validated_request['timeStart'])) {
+                $questionBank = QuestionBank::where('id', $questionBankId)->update([
+                    "timeStart" => $timeStart
+                ]);
+            }
+            $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
+            $this->setStatus('200');
+            $this->setMessage("Update  question bank successfully.");
+        }
+        return $this->respond();
+    }
+
+    public function updateQuestion(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionList = $validated_request['questionList'];
+        $checkStatus = false;
+        foreach ($questionList as $question) {
+            if (!empty($question['question'])) {
+                foreach ($question['question'] as $item) {
+                    $questionId = $item['id'];
+                    if (!empty($item['content'])) {
+                        Question::where('id', $questionId)->update([
+                            "content" => $item['content']
+                        ]);
+                    }
+                    if (!empty($item['level'])) {
+                        Question::where('id', $questionId)->update([
+                            "level" => $item['level']
+                        ]);
+                    }
+                    if (!empty($item['top_question_ids'])) {
+                        Question::where('id', $questionId)->update([
+                            "top_question_ids" => json_encode($item['top_question_ids'])
+                        ]);
+                    }
+                    if (!empty($item['bottom_question_ids'])) {
+                        Question::where('id', $questionId)->update([
+                            "top_question_ids" => json_encode($item['top_question_ids'])
+                        ]);
+                    }
+                }
+            }
+
+            if (!empty($question['answer'])) {
+                foreach ($question['answer'] as $item) {
+                    $answerId = $item['id'];
+                    if (!empty($item['content'])) {
+                        DetailQuestion::where('id', $answerId)->update([
+                            "content" => $item['content']
+                        ]);
+                    }
+
+                    if (!empty($item['isCorrect'])) {
+                        // dd($item['isCorrect']);
+                        DetailQuestion::where('id', $answerId)->update([
+                            "isCorrect" => $item['isCorrect']
+                        ]);
+
+                        $questionId = DetailQuestion::where('id', $answerId)->pluck('questionId')->toArray();
+                        $answersOtherId = DetailQuestion::where('questionId', $questionId[0])->pluck('id')->toArray();
+                        foreach ($answersOtherId as $id) {
+                            if ($id != $answerId) {
+                                DetailQuestion::where('id', $id)->update([
+                                    "isCorrect" => 0
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+            $checkStatus = true;
+        }
+        if ($checkStatus) {
+            $this->setStatus('200');
+            $this->setMessage("Update question successfully");
+        } else {
+            $this->setStatus('400');
+            $this->setMessage("Update question failed");
+        }
+        return $this->respond();
+    }
+
+    public function activeQuestionBank(QuestionBankRequests $request)
+    {
+        $validated_request = $request->validated();
+
+        $questionBank = QuestionBank::where('id', $validated_request['id'])->where('creatorId', auth()->id())->update([
+            "isPublished" => 1
+        ]);
+
+        if ($questionBank) {
+            $this->setStatus('200');
+            $this->setMessage("Active exam successfully!");
+        } else {
+            $this->setStatus('400');
+            $this->setMessage("Active exam failed!");
+        }
+
         return $this->respond();
     }
 

@@ -24,6 +24,7 @@ class  QuestionBankResource extends JsonResource
             'countLimit' => $this->countLimit,
             'numExamination' => $this->numExamination,
             'isPublished' => $this->isPublished,
+            'categoryId' => $this->categoryId,
             'creatorId' => $this->creatorId,
             'created_at' =>  strtotime($this->created_at),
             'updated_at' =>  strtotime($this->updated_at),

@@ -40,6 +40,11 @@ class QuestionBankRequests extends FormRequest
                     'questionList' => ['required', 'array'],
                 ];
                 break;
+            case 'questionbank.activeQuestionBank':
+                return [
+                    'id' => ['required', 'string', 'exists:questionbank,id'],
+                ];
+                break;
             case 'questionbank.createQuestionBank':
                 return [
                     'categoryId' => ['required', 'string', 'exists:categories,id'],
@@ -50,16 +55,28 @@ class QuestionBankRequests extends FormRequest
                     'timeStart' => ['required', 'integer'],
                     'countLimit' => ['required', 'integer'],
                     'note' => ['string', 'nullable'],
-                    'structureExam' => ['required','array'],
+                    'structureExam' => ['required', 'array'],
                     'isPublished' => ['boolean', 'nullable'],
                 ];
                 break;
-                // case 'questionbank.updateQuestionBank':
-                //     return [
-                // 'id' => ['required', 'string', 'exists:categories,id'],
-                // 'name' => 'string|required',
-                // ];
-                // break;
+            case 'questionbank.updateQuestionBank':
+                return [
+                    'id' => ['required', 'string', 'exists:questionbank,id'],
+                    'name' => ['nullable', 'string'],
+                    'note' => ['nullable', 'string'],
+                    'timeDuration' => ['nullable', 'integer'],
+                    'timeStart' => ['nullable', 'integer'],
+                    'countLimit' => ['nullable', 'integer'],
+                    'note' => ['nullable', 'string'],
+                    'structureExam' => ['nullable', 'array'],
+                    'isPublished' => ['nullable', 'boolean'],
+                ];
+                break;
+            case 'questionbank.updateQuestion':
+                return [
+                    'questionList' => ['required', 'array'],
+                ];
+                break;
             case 'questionbank.deleteQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],

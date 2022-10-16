@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AbstractApiController;
-use App\Http\Middleware\Examinees;
 use App\Http\Requests\ExamineesRequests;
 use App\Http\Resources\DetailQuestionResource;
-use App\Http\Resources\ExamResource;
 use App\Http\Resources\QuestionBankResource;
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\ResultResource;
 use App\Models\Answer;
 use App\Models\DetailQuestion;
-use App\Models\Examinee;
-use App\Models\Exams;
 use App\Models\Question;
 use App\Models\QuestionBank;
 use App\Models\QuestionBank_Questions;
