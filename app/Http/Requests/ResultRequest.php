@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ExamineesRequests extends FormRequest
+class ResultRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,24 +29,23 @@ class ExamineesRequests extends FormRequest
         $name = request()->route()->getName();
         $id = request()->route('id');
         switch ($name) {
-            case 'examinees.getExam':
+            case 'result.getResult':
                 return [
-                    'id' => ['required', 'integer', 'exists:questionbank,numExamination'],
+                    'id' => ['required', 'string', 'exists:questionbank,id'],
                 ];
                 break;
-            case 'examinees.getDetailResult':
+            case 'result.getDetailResult':
                 return [
-                        'id' => ['required', 'string', 'exists:result,id'],
-                ];
-                    break;
-            case 'examinees.submitExam':
-                return [
-                    'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
-                    'restTime' => ['nullable', 'integer'],
-                    'note' => ['nullable', 'string'],
-                    'answerIds' => ['required', 'array'],
+                    'id' => ['required', 'string', 'exists:result,id'],
                 ];
                 break;
+            // case 'examinees.submitExam':
+            //     return [
+            //         'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
+            //         'restTime' => ['nullable', 'integer'],
+            //         'answerIds' => ['required', 'array'],
+            //     ];
+            //     break;
             default:
                 return [];
                 break;

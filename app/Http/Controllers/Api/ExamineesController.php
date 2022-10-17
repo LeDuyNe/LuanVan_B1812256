@@ -168,9 +168,11 @@ class ExamineesController extends AbstractApiController
         $questionBankId = $validated_request['questionBankId'];
         $examineeId = auth()->id();
         $answersId = $validated_request['answerIds'];
+        $note = $validated_request['note'] ?? null;
 
         $result = Result::create([
             'restTime' => $restTime,
+            'note' => $note,
             'examineeId' => $examineeId,
             'questionBankId' =>   $questionBankId,
         ]);
