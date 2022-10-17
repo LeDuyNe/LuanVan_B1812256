@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::group(['prefix' => 'result'], function () {
             Route::get('/{id}', [ResultController::class, 'getResult'])->name("result.getResult");
             Route::get('/detail/{id}', [ResultController::class, 'getDetailResult'])->name("result.getDetailResult");
+            Route::post('/{id}', [ResultController::class, 'updateResult'])->name("result.updateResult");
             // Route::get('/{id}', [ResultController::class, 'getResult'])->name("exam.getResult");
             // Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
             // Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");

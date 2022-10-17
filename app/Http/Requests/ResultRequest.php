@@ -39,13 +39,14 @@ class ResultRequest extends FormRequest
                     'id' => ['required', 'string', 'exists:result,id'],
                 ];
                 break;
-            // case 'examinees.submitExam':
-            //     return [
-            //         'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
-            //         'restTime' => ['nullable', 'integer'],
-            //         'answerIds' => ['required', 'array'],
-            //     ];
-            //     break;
+            case 'result.updateResult':
+                return [
+                    'id' => ['required', 'string', 'exists:result,id'],
+                    'restTime' => ['nullable', 'integer'],
+                    'numTrueAnswer' => ['nullable', 'integer'],
+                    'note' => ['nullable', 'string'],
+                ];
+                break;
             default:
                 return [];
                 break;

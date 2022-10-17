@@ -90,4 +90,38 @@ class ResultController extends AbstractApiController
         $this->setMessage("Get result succefully !");
         return $this->respond();
     }
+
+    public function updateResult(ResultRequest $request)
+    {
+        $validated_request = $request->validated();
+        $resultId = $validated_request['id'];
+
+        $oldRestTime = Result::where("id", $resultId)->pluck('restTime')->toArray();
+        $numOldCorrect = Result::where("id", $resultId)->pluck('numCorrect')->toArray();
+        $oldNote = Result::where("id", $resultId)->pluck('note')->toArray();
+        $tempNumOldCorrect = explode("/", $numOldCorrect[0]);
+
+        $restTime = $validated_request['restTime'] ?? $oldRestTime;
+        $note = $validated_request['note'] ?? $oldNote;
+        $numTrueAnswer = $validated_request['numTrueAnswer'] ?? $tempNumOldCorrect[0];
+
+        $result = Result::where("id", $resultId)
+            ->update([
+                'restTime' => $restTime,
+                'note' => $note,
+                'numCorrect' => $numTrueAnswer . '/' . $tempNumOldCorrect[1]
+            ]);
+        
+            if($result){
+                $result =  ResultResource::collection(Result::where('id', $resultId)->get());
+                $this->setData($result);
+                $this->setStatus('200');
+                $this->setMessage("Update result succefully !");
+            }else{
+                $this->setStatus('400');
+                $this->setMessage("Update result failed !");
+            }
+
+            return $this->respond();
+    }
 }
