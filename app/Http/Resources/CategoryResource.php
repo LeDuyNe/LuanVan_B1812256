@@ -20,8 +20,8 @@ class CategoryResource extends JsonResource
             'note' => $this->note,
             'isPublished' => $this->isPublished,
             'color' => $this->color,
-            'created_at' =>  strtotime($this->created_at),
-            'updated_at' =>  strtotime($this->updated_at),
+            'createdAt' =>  strtotime($this->created_at),
+            'updatedAt' =>  strtotime($this->updated_at),
         ];
     }
 }

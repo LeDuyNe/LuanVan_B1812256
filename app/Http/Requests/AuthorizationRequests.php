@@ -27,6 +27,7 @@ class AuthorizationRequests extends FormRequest
     public function rules()
     {
         $name = request()->route()->getName();
+        $id = request()->route('id');
         switch ($name) {
             case 'login':
                 return [
@@ -48,15 +49,17 @@ class AuthorizationRequests extends FormRequest
             case 'update-password':
                 return [
                     'oldPassword' => 'string|min:6|required',
-                    'newPassword' => 'string|min:6|required'
+                    'newPassword' => 'string|min:6|required',
                 ];
                 break;
             case 'update-info':
                 return [
                     'name' => 'string|nullable',
                     'avartar' => 'string|nullable',
-                    'nameTitle' => 'string|nullable',
-                    'role' => 'integer|between:1,2|nullable'
+                    'nameTitle' => 'string|nullable'
+                    // 'name' => ['string', 'nullable'],
+                    // 'avartar' => ['string', 'nullable'],
+                    // 'nameTitle' => ['string', 'nullable'],
                 ];
                 break;
             default:
@@ -64,6 +67,12 @@ class AuthorizationRequests extends FormRequest
                 break;
         }
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge(['id' => $this->route('id')]);
+    }
+
 
     protected function failedValidation(Validator $validator)
     {

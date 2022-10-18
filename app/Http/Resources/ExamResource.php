@@ -23,8 +23,8 @@ class ExamResource extends JsonResource
             'countLimit' => $this->countLimit,
             'numExamination' => $this->numExamination,
             'creatorId' => $this->creatorId,
-            'created_at' =>  strtotime($this->created_at),
-            'updated_at' =>  strtotime($this->updated_at),
+            'createdAt' =>  strtotime($this->created_at),
+            'updatedAt' =>  strtotime($this->updated_at),
         ];
     }
 }

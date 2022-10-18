@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\AbstractApiController;
 use App\Http\Requests\QuestionBankRequests;
 use App\Http\Resources\DetailQuestionResource;
+use App\Http\Resources\OptionalResource;
 use App\Http\Resources\QuestionBankResource;
 use App\Http\Resources\QuestionResource;
 use App\Models\Category;
@@ -24,7 +25,10 @@ class QuestionBankController extends AbstractApiController
         $data = array();
 
         foreach ($questionsBankId as $questionBankId) {
-            $questionBank['main'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId['id'])->get());
+            $main =QuestionBank::where('id', $questionBankId['id'])->get();
+            $categoryId = QuestionBank::where('id', $questionBankId['id'])->pluck('categoryId')->toArray();
+
+            $questionBank['main'] =  QuestionBankResource::collection($main);
             $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId['id'])->pluck('questionId');
 
             $easyQuestion = 0;
@@ -48,8 +52,13 @@ class QuestionBankController extends AbstractApiController
                 'difficult' => $difficultQuestion,
                 'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
             ];
-
+ 
             $questionBank['sub'] =  $totalQuestion;
+            $nameCategory = Category::where('id', $categoryId[0])->pluck('name')->toArray();
+            // dd($nameCategory);
+            $questionBank['optional'] = ([
+                "categoryName" => $nameCategory[0]
+            ]);
             array_push($data, $questionBank);
         }
 

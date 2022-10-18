@@ -29,8 +29,8 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/update', [AuthController::class, 'updateInfo'])->name('update-info');
     Route::post('/change-password', [AuthController::class, 'updatePassword'])->name('update-password');
+    Route::patch('/update', [AuthController::class, 'updateInfo'])->name('update-info');
 
     Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
         Route::get('/users', [AdminController::class, 'getUsers']);

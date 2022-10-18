@@ -71,13 +71,12 @@ class AuthController extends AbstractApiController
         $oldRole = $validated_request['role'] ?? User::where('id', auth()->user()->id)->pluck('role')->toArray();
         $oldAvarta = User::where('id', auth()->user()->id)->pluck('avartar')->toArray();
         $nameOldTitle = User::where('id', auth()->user()->id)->pluck('nameTitle')->toArray();
-  
+
         $name = $validated_request['name'] ?? $oldName[0];
         $role =  $validated_request['role'] ?? $oldRole[0];
         $avartar =  $validated_request['avartar'] ?? $oldAvarta[0];
-        // dd($avartar);
-        $nameTitle = $validated_request['nameTitle'] ?? $nameOldTitle[0];
 
+        $nameTitle = $validated_request['nameTitle'] ?? $nameOldTitle[0];
         $user = User::where('id',auth()->user()->id)->update([
             'name' => $name,
             'avartar' => $avartar,
