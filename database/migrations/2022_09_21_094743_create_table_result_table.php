@@ -17,6 +17,7 @@ class CreateTableResultTable extends Migration
             $table->uuid('id')->primary();
             $table->string('numCorrect')->nullable();
             $table->integer('restTime')->nullable();
+            $table->string('note')->nullable();
             $table->uuid('examineeId');
             $table->uuid('questionBankId');
 

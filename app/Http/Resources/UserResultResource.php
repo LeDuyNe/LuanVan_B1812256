@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ResultResource extends JsonResource
+class UserResultResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -12,16 +12,15 @@ class ResultResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
+
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'numCorrect' => $this->numCorrect,
-            'restTime' => $this->restTime,
-            'note' => $this->note,
-            'examineeId ' => $this->examineeId ,
-            'questionBankId ' => $this->questionBankId ,
-            'dateSubmit' =>  strtotime($this->created_at),
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+            'nameTitle' => $this->nameTitle,
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CreatorController;
 use App\Http\Controllers\Api\ExamineesController;
 use App\Http\Controllers\Api\ExamController;
+use App\Http\Controllers\API\ResultController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -62,11 +63,23 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route::group(['prefix' => 'exam'], function () {
         //     Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
         //     Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
-            // Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
-            // Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+        //     Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+        //     Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
         //     Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
         //     Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         // });
+
+        Route::group(['prefix' => 'result'], function () {
+            Route::get('/{id}', [ResultController::class, 'getResult'])->name("result.getResult");
+            Route::get('/detail/{id}', [ResultController::class, 'getDetailResult'])->name("result.getDetailResult");
+            Route::post('/{id}', [ResultController::class, 'updateResult'])->name("result.updateResult");
+            // Route::get('/{id}', [ResultController::class, 'getResult'])->name("exam.getResult");
+            // Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
+            // Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+            // Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+            // Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+            // Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
+        });
     });
 
     Route::group(['prefix' => 'examinees', 'middleware' => ['examinees']], function () {
