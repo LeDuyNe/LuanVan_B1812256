@@ -17,8 +17,8 @@ class CreateTableQuestionsTable extends Migration
             $table->uuid('id')->primary();
             $table->longText('content');
             $table->integer('level');
-            $table->string('top_question_ids')->nullable();
-            $table->string('bottom_question_ids')->nullable();
+            $table->string('topQuestionsId')->nullable();
+            $table->string('bottomQuestionsId')->nullable();
        
             $table->timestamps();
         });

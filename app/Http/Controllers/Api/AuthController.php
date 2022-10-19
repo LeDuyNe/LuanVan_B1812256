@@ -15,7 +15,7 @@ class AuthController extends AbstractApiController
         $user = User::create([
             'name' => $validated_request['name'],
             'email' => $validated_request['email'],
-            'avartar' => $validated_request['avartar'] ?? null,
+            'avatar' => $validated_request['avatar'] ?? null,
             'role' => $validated_request['role'],      //    Role (0) admin, (1) for teachers, (2) for students
             'nameTitle' => $validated_request['nameTitle'] ?? null,
             'password' => Hash::make($validated_request['password'])
@@ -69,17 +69,17 @@ class AuthController extends AbstractApiController
 
         $oldName = User::where('id', auth()->user()->id)->pluck('name')->toArray();
         $oldRole = $validated_request['role'] ?? User::where('id', auth()->user()->id)->pluck('role')->toArray();
-        $oldAvarta = User::where('id', auth()->user()->id)->pluck('avartar')->toArray();
+        $oldAvatar = User::where('id', auth()->user()->id)->pluck('avatar')->toArray();
         $nameOldTitle = User::where('id', auth()->user()->id)->pluck('nameTitle')->toArray();
 
         $name = $validated_request['name'] ?? $oldName[0];
         $role =  $validated_request['role'] ?? $oldRole[0];
-        $avartar =  $validated_request['avartar'] ?? $oldAvarta[0];
+        $avatar =  $validated_request['avatar'] ?? $oldAvatar[0];
 
         $nameTitle = $validated_request['nameTitle'] ?? $nameOldTitle[0];
         $user = User::where('id',auth()->user()->id)->update([
             'name' => $name,
-            'avartar' => $avartar,
+            'avatar' => $avatar,
             'role' => $oldRole[0],      //    Role (0) admin, (1) for teachers, (2) for students
             'nameTitle' => $nameTitle
         ]);

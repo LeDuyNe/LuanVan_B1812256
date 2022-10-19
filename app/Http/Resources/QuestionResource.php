@@ -18,8 +18,8 @@ class QuestionResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'level' => $this->level,
-            'top_question_ids' => $this->top_question_ids,
-            'bottom_question_ids' => $this->bottom_question_ids,
+            'topQuestionsId' => $this->top_question_ids,
+            'bottomQuestionsId' => $this->bottom_question_ids,
         ];
     }
 }

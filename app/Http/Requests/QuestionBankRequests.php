@@ -34,7 +34,7 @@ class QuestionBankRequests extends FormRequest
                     'id' => ['required', 'string', 'exists:questionbank,id'],
                 ];
                 break;
-            case 'questionbank.adddQuestionBank':
+            case 'questionbank.addQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],
                     'questionList' => ['required', 'array'],
@@ -62,10 +62,9 @@ class QuestionBankRequests extends FormRequest
             case 'questionbank.updateQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],
-                    'name' => ['nullable', 'string'],
-                    'note' => ['nullable', 'string'],
-                    'timeDuration' => ['nullable', 'integer'],
                     'timeStart' => ['nullable', 'integer'],
+                    'name' => ['nullable', 'string'],
+                    'timeDuration' => ['nullable', 'integer'],
                     'countLimit' => ['nullable', 'integer'],
                     'note' => ['nullable', 'string'],
                     'structureExam' => ['nullable', 'array'],

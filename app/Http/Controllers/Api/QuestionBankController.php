@@ -25,7 +25,7 @@ class QuestionBankController extends AbstractApiController
         $data = array();
 
         foreach ($questionsBankId as $questionBankId) {
-            $main =QuestionBank::where('id', $questionBankId['id'])->get();
+            $main = QuestionBank::where('id', $questionBankId['id'])->get();
             $categoryId = QuestionBank::where('id', $questionBankId['id'])->pluck('categoryId')->toArray();
 
             $questionBank['main'] =  QuestionBankResource::collection($main);
@@ -47,15 +47,14 @@ class QuestionBankController extends AbstractApiController
             }
 
             $totalQuestion = [
-                'esay'  => $easyQuestion,
+                'easy'  => $easyQuestion,
                 'normal' => $normalQuestion,
                 'difficult' => $difficultQuestion,
                 'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
             ];
- 
+
             $questionBank['sub'] =  $totalQuestion;
             $nameCategory = Category::where('id', $categoryId[0])->pluck('name')->toArray();
-            // dd($nameCategory);
             $questionBank['optional'] = ([
                 "categoryName" => $nameCategory[0]
             ]);
@@ -78,8 +77,9 @@ class QuestionBankController extends AbstractApiController
         $data = array();
         $data_question = array();
 
-        $questionBank['general']['main'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId)->get());
+        $questionBank['main'] = QuestionBankResource::collection(QuestionBank::where('id', $questionBankId)->get());
         $questionsId = QuestionBank_Questions::where('questionBankId', $questionBankId)->pluck('questionId');
+
 
         $easyQuestion = 0;
         $normalQuestion = 0;
@@ -108,19 +108,23 @@ class QuestionBankController extends AbstractApiController
             array_push($data_question, $question);
         }
         $totalQuestion = [
-            'esay'  => $easyQuestion,
+            'easy'  => $easyQuestion,
             'normal' => $normalQuestion,
             'difficult' => $difficultQuestion,
             'total' =>  $easyQuestion + $normalQuestion + $difficultQuestion
         ];
-
-        $questionBank['general']['sub'] =  $totalQuestion;
+        $questionBank['sub'] =  $totalQuestion;
+        $categoryId = QuestionBank::where('id', $questionBankId)->pluck('categoryId')->toArray();
+        $nameCategory = Category::where('id', $categoryId[0])->pluck('name')->toArray();
+        $questionBank['optional'] = ([
+            "categoryName" => $nameCategory[0]
+        ]);
         $questionBank['question'] = $data_question;
 
         if ($questionBank) {
             $this->setData($questionBank);
             $this->setStatus('200');
-            $this->setMessage("Get QuestionBank succesfully !");
+            $this->setMessage("Get QuestionBank successfully !");
         } else {
             $this->setStatus('400');
             $this->setMessage("Get QuestionBank failed !");
@@ -151,11 +155,11 @@ class QuestionBankController extends AbstractApiController
         } else {
             $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->first();
 
-            $numExamination = rand(0, 99999);
+            $numExamination = rand(0, 999999);
             $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
 
             while (!$statusNumExamination) {
-                $numExamination = rand(0, 99999);
+                $numExamination = rand(0, 999999);
                 $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
             }
             if (!$checkQuestionBank) {
@@ -175,14 +179,14 @@ class QuestionBankController extends AbstractApiController
                 foreach ($quizList as $quiz) {
                     $content = $quiz['content'];
                     $level = $quiz['level'];
-                    $top_question_ids = json_encode($quiz['top_question_ids']);
-                    $bottom_question_ids = json_encode($quiz['bottom_question_ids']);
+                    $topQuestionsId = json_encode($quiz['topQuestionsId']);
+                    $bottomQuestionsId = json_encode($quiz['bottomQuestionsId']);
 
                     $question = Question::create([
                         'content' => $content,
                         'level' => $level,
-                        'top_question_ids' => $top_question_ids,
-                        'bottom_question_ids' => $bottom_question_ids
+                        'topQuestionsId' => $topQuestionsId,
+                        'bottomQuestionsId' => $bottomQuestionsId
                     ]);
 
                     $questionBank_questions = QuestionBank_Questions::create([
@@ -208,10 +212,10 @@ class QuestionBankController extends AbstractApiController
                 if ($question) {
                     $this->setData(new QuestionBankResource($questionBank));
                     $this->setStatus('200');
-                    $this->setMessage("Creat Exam is successfully !");
+                    $this->setMessage("Create Exam is successfully !");
                 } else {
                     $this->setStatus('400');
-                    $this->setMessage("Creat Exam is fail !");
+                    $this->setMessage("Create Exam is fail !");
                 }
             } else {
                 $this->setStatus('400');
@@ -221,7 +225,7 @@ class QuestionBankController extends AbstractApiController
         return $this->respond();
     }
 
-    public function adddQuestionBank(QuestionBankRequests $request)
+    public function addQuestionBank(QuestionBankRequests $request)
     {
         $validated_request = $request->validated();
 
@@ -234,14 +238,14 @@ class QuestionBankController extends AbstractApiController
             foreach ($quizList as $quiz) {
                 $content = $quiz['content'];
                 $level = $quiz['level'];
-                $top_question_ids = json_encode($quiz['top_question_ids']);
-                $bottom_question_ids = json_encode($quiz['bottom_question_ids']);
+                $topQuestionsId = json_encode($quiz['topQuestionsId']);
+                $bottomQuestionsId = json_encode($quiz['bottomQuestionsId']);
 
                 $question = Question::create([
                     'content' => $content,
                     'level' => $level,
-                    'top_question_ids' => $top_question_ids,
-                    'bottom_question_ids' => $bottom_question_ids
+                    'topQuestionsId' => $topQuestionsId,
+                    'bottomQuestionsId' => $bottomQuestionsId
                 ]);
 
                 $questionBank_questions = QuestionBank_Questions::create([
@@ -276,15 +280,30 @@ class QuestionBankController extends AbstractApiController
     public function updateQuestionBank(QuestionBankRequests $request)
     {
         $validated_request = $request->validated();
-
         $questionBankId = $validated_request['id'];
         $userId = auth()->id();
         $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
 
         if (!empty($validated_request['name'])) {
-            $name_questionBank = Str::lower($validated_request['name']);
-            $questionBankExitId = QuestionBank::where(['creatorId' => $userId, 'name' => $name_questionBank])->pluck('id')->toArray();
-            if ($questionBankExitId[0] == $questionBankId) {
+            $nameQuestionBank = Str::lower($validated_request['name']);
+            $questionBankExitId = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->pluck('id')->toArray();
+
+            if ($questionBankExitId !== []) {
+                if ($questionBankExitId[0] == $questionBankId) {
+                    $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
+                    if (!empty($validated_request['timeStart'])) {
+                        $questionBank = QuestionBank::where('id', $questionBankId)->update([
+                            "timeStart" => $timeStart
+                        ]);
+                    }
+                    $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
+                    $this->setStatus('200');
+                    $this->setMessage("Update question bank successfully.");
+                } else {
+                    $this->setStatus('400');
+                    $this->setMessage("Name question bank is existed");
+                }
+            } else {
                 $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
                 if (!empty($validated_request['timeStart'])) {
                     $questionBank = QuestionBank::where('id', $questionBankId)->update([
@@ -293,10 +312,7 @@ class QuestionBankController extends AbstractApiController
                 }
                 $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
                 $this->setStatus('200');
-                $this->setMessage("Update question bank successfully.");
-            } else {
-                $this->setStatus('400');
-                $this->setMessage("Name question bank is existed");
+                $this->setMessage("Update  question bank successfully.");
             }
         } else {
             $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
@@ -309,6 +325,7 @@ class QuestionBankController extends AbstractApiController
             $this->setStatus('200');
             $this->setMessage("Update  question bank successfully.");
         }
+
         return $this->respond();
     }
 
@@ -332,14 +349,14 @@ class QuestionBankController extends AbstractApiController
                             "level" => $item['level']
                         ]);
                     }
-                    if (!empty($item['top_question_ids'])) {
+                    if (!empty($item['topQuestionsId'])) {
                         Question::where('id', $questionId)->update([
-                            "top_question_ids" => json_encode($item['top_question_ids'])
+                            "topQuestionsId" => json_encode($item['topQuestionsId'])
                         ]);
                     }
-                    if (!empty($item['bottom_question_ids'])) {
+                    if (!empty($item['bottomQuestionsId'])) {
                         Question::where('id', $questionId)->update([
-                            "top_question_ids" => json_encode($item['top_question_ids'])
+                            "bottomQuestionsId" => json_encode($item['bottomQuestionsId'])
                         ]);
                     }
                 }
@@ -355,7 +372,6 @@ class QuestionBankController extends AbstractApiController
                     }
 
                     if (!empty($item['isCorrect'])) {
-                        // dd($item['isCorrect']);
                         DetailQuestion::where('id', $answerId)->update([
                             "isCorrect" => $item['isCorrect']
                         ]);

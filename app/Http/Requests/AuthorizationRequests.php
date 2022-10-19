@@ -40,10 +40,9 @@ class AuthorizationRequests extends FormRequest
                     'name' => 'string|required',
                     'email' => 'unique:users,email|string|email|required',
                     'password' => 'string|min:6|required',
-                    'avartar' => 'string|nullable',
+                    'avatar' => 'string|nullable',
                     'nameTitle' => 'string|nullable',
                     'role' => 'integer|between:1,2|required',
-                    // 're_password' => 'required|same:password'
                 ];
                 break;
             case 'update-password':
@@ -55,11 +54,8 @@ class AuthorizationRequests extends FormRequest
             case 'update-info':
                 return [
                     'name' => 'string|nullable',
-                    'avartar' => 'string|nullable',
+                    'avatar' => 'string|nullable',
                     'nameTitle' => 'string|nullable'
-                    // 'name' => ['string', 'nullable'],
-                    // 'avartar' => ['string', 'nullable'],
-                    // 'nameTitle' => ['string', 'nullable'],
                 ];
                 break;
             default:

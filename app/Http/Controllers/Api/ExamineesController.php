@@ -45,25 +45,25 @@ class ExamineesController extends AbstractApiController
                 $numNormal = $structureExam['normal'];
                 $numDifficult = $structureExam['difficult'];
 
-                $esay = 1;
+                $easy = 1;
                 $normal = 2;
                 $difficult = 3;
 
-                $arrayQuestionsEasy = $this->getQuestionsId($questionBankId, $esay);
+                $arrayQuestionsEasy = $this->getQuestionsId($questionBankId, $easy);
                 $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
                 $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
 
-                $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
+                $randomQuestionEasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
                 $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
                 $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
 
                 $arrayQuestionsId = [];
-                if (is_array($randomQuestionEeasy) == true) {
-                    foreach ($randomQuestionEeasy as $question) {
+                if (is_array($randomQuestionEasy) == true) {
+                    foreach ($randomQuestionEasy as $question) {
                         array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
                     }
                 } else {
-                    array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
+                    array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEasy]);
                 }
 
                 if (is_array($randomQuestionNormal) == true) {
@@ -103,7 +103,7 @@ class ExamineesController extends AbstractApiController
 
                 $this->setData($data);
                 $this->setStatus('200');
-                $this->setMessage("Get exam succefully !");
+                $this->setMessage("Get exam successfully !");
             } else {
                 $this->setStatus('400');
                 $this->setMessage("The number of attempts has exceeded the limit");
@@ -123,7 +123,7 @@ class ExamineesController extends AbstractApiController
         $result->groupBy('examId');
         $this->setData(ResultResource::collection($result));
         $this->setStatus('200');
-        $this->setMessage("Get result succefully !");
+        $this->setMessage("Get result successfully !");
         return $this->respond();
     }
 
@@ -156,7 +156,7 @@ class ExamineesController extends AbstractApiController
         $result['sub'] = $answer;
         $this->setData($result);
         $this->setStatus('200');
-        $this->setMessage("Get result succefully !");
+        $this->setMessage("Get result successfully !");
         return $this->respond();
     }
 
@@ -204,7 +204,7 @@ class ExamineesController extends AbstractApiController
         if ($result) {
             $this->setData($result);
             $this->setStatus('200');
-            $this->setMessage("Submit exam succefully !");
+            $this->setMessage("Submit exam successfully !");
         } else {
             $this->setStatus('400');
             $this->setMessage("Submit exam failed !");

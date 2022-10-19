@@ -73,24 +73,32 @@ class CategoryController extends AbstractApiController
         if (!empty($validated_request['name'])) {
             $name_category = Str::lower($validated_request['name']);
             $categoryExitId = Category::where(['creatorId' => $userId, 'name' => $name_category])->pluck('id')->toArray();
-      
-            if ($categoryExitId[0] == $categoryId) {
+            if($categoryExitId !== []){
+                if ($categoryExitId[0] == $categoryId) {
+                    $category = Category::where('id', $categoryId)->update($request->all());
+                    $this->setData(new CategoryResource(Category::findOrFail($categoryId)));
+                    $this->setStatus('200');
+                    $this->setMessage("Update category successfully.");
+                } else {
+                    $this->setStatus('400');
+                    $this->setMessage("Category is existed");
+                }
+            }else{
                 $category = Category::where('id', $categoryId)->update($request->all());
-
+            
                 $this->setData(new CategoryResource(Category::findOrFail($categoryId)));
                 $this->setStatus('200');
                 $this->setMessage("Update category successfully.");
-            } else {
-                $this->setStatus('400');
-                $this->setMessage("Category is existed");
-            }
+            }            
         } else {
+
             $category = Category::where('id', $categoryId)->update($request->all());
             
             $this->setData(new CategoryResource(Category::findOrFail($categoryId)));
             $this->setStatus('200');
             $this->setMessage("Update category successfully.");
         }
+
         return $this->respond();
     }
 
