@@ -13,10 +13,11 @@ class TableAnswerTable extends Migration
      */
     public function up()
     {
-        Schema::create('answer', function (Blueprint $table) {
+        Schema::create('choose_answer', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('answerId');
             $table->uuid('resultId');
+            
             $table->timestamps();
 
             $table->foreign('answerId')->references('id')->on('detail_question')->onDelete('cascade');

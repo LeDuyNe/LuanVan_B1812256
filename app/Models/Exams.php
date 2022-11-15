@@ -18,11 +18,11 @@ class Exams extends Model
         'timeDuration',
         'timeStart',
         'countLimit',
-        'note',
         'numExamination',
         'isPublished',
+        'note',
         'questionBankId',
-        'creatorId',
+        'creatorId'
       ];
 
       protected $casts = [

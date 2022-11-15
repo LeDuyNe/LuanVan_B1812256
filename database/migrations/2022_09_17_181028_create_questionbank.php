@@ -17,18 +17,14 @@ class CreateQuestionbank extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('note')->nullable();
-            $table->string("structureExam");
-            $table->integer('timeDuration');
-            $table->string('timeStart');
-            $table->integer('countLimit');
-            $table->integer('numExamination')->nullable();
             $table->boolean('isPublished')->default(0);  
             $table->uuid('categoryId');
             $table->uuid('creatorId');
+
             $table->timestamps();
             
-            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('categoryId')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('creatorId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -124,7 +124,7 @@ class ExamController extends AbstractApiController
 
         $questionBankId = $validated_request['questionBankId'];
         $name = Str::lower($validated_request['name']);
-        $questionList = $validated_request['questionList'];
+        $structureExam = $validated_request['structureExam'];
         $timeDuration = $validated_request['timeDuration'];
         $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
         $countLimit = $validated_request['countLimit'];
@@ -132,27 +132,24 @@ class ExamController extends AbstractApiController
         $isPublished = $validated_request['isPublished'] ?? 0;
         $numExams = $validated_request['numExams'] ?? 1;
 
-        $numEasy = $questionList['easy'];
-        $numNormal = $questionList['normal'];
-        $numDifficult = $questionList['difficult'];
-
+        $numEasy = $structureExam['easy'];
+        $numNormal = $structureExam['normal'];
+        $numDifficult = $structureExam['difficult'];
         $esay = 1;
         $normal = 2;
         $difficult = 3;
-
         $arrayQuestionsEasy = $this->getQuestionsId($questionBankId, $esay);
         $arrayQuestionsNormal = $this->getQuestionsId($questionBankId, $normal);
         $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId, $difficult);
-
-        $numExamination = rand(0, 99999);
-        $statusNumExamination = Exams::where('numExamination', $numExamination)->get();
-
-        while (!$statusNumExamination) {
-            $numExamination = rand(0, 99999);
+        $exams = [];
+        while ($numExams > 0) {
+            $numExamination = rand(0, 999999);
             $statusNumExamination = Exams::where('numExamination', $numExamination)->get();
-        }
+            while (!$statusNumExamination) {
+                $numExamination = rand(0, 999999);
+                $statusNumExamination = Exams::where('numExamination', $numExamination)->get();
+            }
 
-        for ($i = 1; $i <= $numExams; $i++) {
             $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
             $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
             $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
@@ -174,7 +171,6 @@ class ExamController extends AbstractApiController
                 array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
             }
 
-
             if (is_array($randomQuestionDifficult) == true) {
                 foreach ($randomQuestionDifficult as $question) {
                     array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
@@ -195,10 +191,12 @@ class ExamController extends AbstractApiController
                 'questionBankId' => $questionBankId,
                 'creatorId' => Auth::id(),
             ]);
+            array_push($exams, $exam);
+            $numExams--;
         }
 
-        if ($exam) {
-            $this->setData($exam);
+        if ($exams != []) {
+            $this->setData(ExamResource::collection($exams));
             $this->setStatus('200');
             $this->setMessage("Creat Exam is successfully !");
         } else {
@@ -293,3 +291,15 @@ class ExamController extends AbstractApiController
         return $randomElement;
     }
 }
+
+        // $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
+                    // if (!empty($validated_request['timeStart'])) {
+                    //     $questionBank = QuestionBank::where('id', $questionBankId)->update([
+                    //         "timeStart" => $timeStart
+                    //     ]);
+                    // }
+                    // if (!empty($validated_request['timeStart'])) {
+                    //     $questionBank = QuestionBank::where('id', $questionBankId)->update([
+                    //         "timeStart" => $timeStart
+                    //     ]);
+                    // }

@@ -19,7 +19,7 @@ class CreateTableQuestionsTable extends Migration
             $table->integer('level');
             $table->string('topQuestionsId')->nullable();
             $table->string('bottomQuestionsId')->nullable();
-       
+
             $table->timestamps();
         });
     }

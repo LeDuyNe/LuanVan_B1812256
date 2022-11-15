@@ -18,8 +18,9 @@ class TableDetailQuestionTable extends Migration
             $table->longText('content');
             $table->boolean('isCorrect');
             $table->uuid('questionId');
-            $table->timestamps();
 
+            $table->timestamps();
+            
             $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
         });
     }

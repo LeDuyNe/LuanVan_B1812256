@@ -17,8 +17,8 @@ class CreateTableCategoriesTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string("note")->nullable();
-            $table->boolean('isPublished')->default(0);
             $table->string("color")->nullable();
+            $table->boolean('isPublished')->default(0);
             $table->uuid('creatorId');
 
             $table->timestamps();

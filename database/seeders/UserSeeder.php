@@ -18,35 +18,35 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'admin',
-            'email' => 'admin@admin.com',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('123456789'),
             'role' => '0',
         ]);
 
         User::create([
             'name' => 'Nguyễn Tấn Pil',
-            'email' => 'pilB1812295@student.ctu.edu.vn',
+            'email' => 'pilB1812295@gmail.com',
             'password' => Hash::make('123456789'),
             'role' => '1',
         ]);
 
         User::create([
             'name' => 'Lê Duy',
-            'email' => 'duyB1812256@student.ctu.edu.vn',
+            'email' => 'duyB1812256@gmail.com',
             'password' => Hash::make('123456789'),
             'role' => '1',
         ]);
 
         User::create([
             'name' => 'Trần Bảo Duy',
-            'email' => 'duyB1812258@student.ctu.edu.vn',
+            'email' => 'duyB1812257@gmail.com',
             'password' => Hash::make('123456789'),
             'role' => '1',
         ]);
 
         User::create([
             'name' => 'Dương Trung Hiền',
-            'email' => 'duyB1812262@student.ctu.edu.vn',
+            'email' => 'duyB1812262@gmail.com',
             'password' => Hash::make('123456789'),
             'role' => '1',
         ]);
@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
         for($i = 1; $i <= 5; $i++){
             User::create([
                 'name' => "student$i",
-                'email' => "user$i@student.ctu.edu.vn",
+                'email' => "user$i@gmail.com",
                 'password' => Hash::make('123456789'),
                 'role' => '2',
             ]);

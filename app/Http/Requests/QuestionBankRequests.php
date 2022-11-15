@@ -50,24 +50,15 @@ class QuestionBankRequests extends FormRequest
                     'categoryId' => ['required', 'string', 'exists:categories,id'],
                     'name' => ['required', 'string'],
                     'questionList' => ['required', 'array'],
-                    'note' => ['string', 'nullable'],
-                    'timeDuration' => ['required', 'integer'],
-                    'timeStart' => ['required', 'integer'],
-                    'countLimit' => ['required', 'integer'],
-                    'note' => ['string', 'nullable'],
-                    'structureExam' => ['required', 'array'],
-                    'isPublished' => ['boolean', 'nullable'],
+                    'note' => ['nullable', 'string'],
+                    'isPublished' => ['nullable', 'boolean'],
                 ];
                 break;
             case 'questionbank.updateQuestionBank':
                 return [
                     'id' => ['required', 'string', 'exists:questionbank,id'],
-                    'timeStart' => ['nullable', 'integer'],
                     'name' => ['nullable', 'string'],
-                    'timeDuration' => ['nullable', 'integer'],
-                    'countLimit' => ['nullable', 'integer'],
                     'note' => ['nullable', 'string'],
-                    'structureExam' => ['nullable', 'array'],
                     'isPublished' => ['nullable', 'boolean'],
                 ];
                 break;

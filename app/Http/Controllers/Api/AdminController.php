@@ -12,9 +12,8 @@ class AdminController extends AbstractApiController
 {
     public function getUsers()
     {
-        $users = UserResource::collection(User::all()->except(Auth::id()));
-        
-        $this->setData($users);
+        $users = User::all()->except(Auth::id());
+        $this->setData(UserResource::collection($users));
         $this->setStatus('200');
         $this->setMessage("List all users");
 

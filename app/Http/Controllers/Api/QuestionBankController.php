@@ -138,14 +138,10 @@ class QuestionBankController extends AbstractApiController
         $validated_request = $request->validated();
 
         $categoryId = $validated_request['categoryId'];
-        $nameQuestionBank = Str::lower($validated_request['name']);
+        $name = Str::lower($validated_request['name']);
         $quizList = $validated_request['questionList'];
         $note = $validated_request['note'] ?? null;
-        $timeDuration = $validated_request['timeDuration'];
-        $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
-        $countLimit = $validated_request['countLimit'];
         $isPublished = $validated_request['isPublished'] ?? 0;
-        $structureExam = $validated_request['structureExam'];
         $userId = auth()->id();
 
         $checkActiveCategory = Category::where(['id' => $categoryId, 'isPublished' => 1])->first();
@@ -153,25 +149,12 @@ class QuestionBankController extends AbstractApiController
             $this->setStatus('400');
             $this->setMessage("The category must be activated!");
         } else {
-            $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $nameQuestionBank])->first();
-
-            $numExamination = rand(0, 999999);
-            $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
-
-            while (!$statusNumExamination) {
-                $numExamination = rand(0, 999999);
-                $statusNumExamination = QuestionBank::where('numExamination', $numExamination)->get();
-            }
+            $checkQuestionBank = QuestionBank::where(['creatorId' => $userId, 'name' => $name])->first();
             if (!$checkQuestionBank) {
                 $questionBank = QuestionBank::create([
-                    'name' => $nameQuestionBank,
+                    'name' => $name,
                     'note' => $note,
-                    'numExamination' =>  $numExamination,
-                    'timeDuration' => $timeDuration,
-                    'timeStart' => $timeStart,
-                    'countLimit' => $countLimit,
                     'isPublished' => $isPublished,
-                    'structureExam' =>  json_encode($structureExam),
                     'categoryId' => $categoryId,
                     'creatorId' => Auth::id(),
                 ]);
@@ -212,14 +195,14 @@ class QuestionBankController extends AbstractApiController
                 if ($question) {
                     $this->setData(new QuestionBankResource($questionBank));
                     $this->setStatus('200');
-                    $this->setMessage("Create Exam is successfully !");
+                    $this->setMessage("Create Question Bank is successfully !");
                 } else {
                     $this->setStatus('400');
-                    $this->setMessage("Create Exam is fail !");
+                    $this->setMessage("Create Question Bank is fail !");
                 }
             } else {
                 $this->setStatus('400');
-                $this->setMessage("Name of exam is existed!");
+                $this->setMessage("Name of Question Bank is existed!");
             }
         }
         return $this->respond();
@@ -282,7 +265,6 @@ class QuestionBankController extends AbstractApiController
         $validated_request = $request->validated();
         $questionBankId = $validated_request['id'];
         $userId = auth()->id();
-        $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
 
         if (!empty($validated_request['name'])) {
             $nameQuestionBank = Str::lower($validated_request['name']);
@@ -291,36 +273,23 @@ class QuestionBankController extends AbstractApiController
             if ($questionBankExitId !== []) {
                 if ($questionBankExitId[0] == $questionBankId) {
                     $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
-                    if (!empty($validated_request['timeStart'])) {
-                        $questionBank = QuestionBank::where('id', $questionBankId)->update([
-                            "timeStart" => $timeStart
-                        ]);
-                    }
+
                     $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
                     $this->setStatus('200');
-                    $this->setMessage("Update question bank successfully.");
+                    $this->setMessage("Update Question Bank successfully.");
                 } else {
                     $this->setStatus('400');
-                    $this->setMessage("Name question bank is existed");
+                    $this->setMessage("Name Question Bank is existed");
                 }
             } else {
                 $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
-                if (!empty($validated_request['timeStart'])) {
-                    $questionBank = QuestionBank::where('id', $questionBankId)->update([
-                        "timeStart" => $timeStart
-                    ]);
-                }
+
                 $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
                 $this->setStatus('200');
                 $this->setMessage("Update  question bank successfully.");
             }
         } else {
             $questionBank = QuestionBank::where('id', $questionBankId)->update($request->all());
-            if (!empty($validated_request['timeStart'])) {
-                $questionBank = QuestionBank::where('id', $questionBankId)->update([
-                    "timeStart" => $timeStart
-                ]);
-            }
             $this->setData(new QuestionBankResource(QuestionBank::findOrFail($questionBankId)));
             $this->setStatus('200');
             $this->setMessage("Update  question bank successfully.");

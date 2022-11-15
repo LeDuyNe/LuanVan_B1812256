@@ -18,16 +18,9 @@ class  QuestionBankResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'note' => $this->note,
-            'structureExam' => $this->structureExam,
-            'timeDuration' => $this->timeDuration,
-            'timeStart' => strtotime($this->timeStart),
-            'countLimit' => $this->countLimit,
-            'numExamination' => $this->numExamination,
             'isPublished' => $this->isPublished,
             'categoryId' => $this->categoryId,
-            'creatorId' => $this->creatorId,
-            'createdAt' =>  strtotime($this->created_at),
-            'updatedAt' =>  strtotime($this->updated_at),
+            'creatorId' => $this->creatorId
         ];
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestionBankController;
@@ -11,16 +10,6 @@ use App\Http\Controllers\API\ResultController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -49,15 +38,24 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::group(['prefix' => 'questionbank'], function () {
+            Route::patch('/update/question', [QuestionBankController::class, 'updateQuestion'])->name("questionbank.updateQuestion");
             Route::patch('/update/{id}', [QuestionBankController::class, 'updateQuestionBank'])->name("questionbank.updateQuestionBank");
             Route::get('/', [QuestionBankController::class, 'getQuestionBank'])->name("questionbank.getQuestionBank");
-            Route::patch('/update/question', [QuestionBankController::class, 'updateQuestion'])->name("questionbank.updateQuestion");
             Route::delete('/delete/question/{id}', [QuestionBankController::class, 'deleteQuestion'])->name("questionbank.deleteQuestion");
             Route::post('/create', [QuestionBankController::class, 'createQuestionBank'])->name("questionbank.createQuestionBank");
             Route::post('/add/{id}', [QuestionBankController::class, 'addQuestionBank'])->name("questionbank.addQuestionBank");
             Route::put('/active/{id}', [QuestionBankController::class, 'activeQuestionBank'])->name("questionbank.activeQuestionBank");
             Route::delete('/delete/{id}', [QuestionBankController::class, 'deleteQuestionBank'])->name("questionbank.deleteQuestionBank");
             Route::get('/{id}', [QuestionBankController::class, 'getDetailQuestionBank'])->name("questionbank.getDetailQuestionBank");
+        });
+
+        Route::group(['prefix' => 'exam'], function () {
+            Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
+            Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
+            Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+            Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
+            Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
+            Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");
         });
 
         Route::group(['prefix' => 'result'], function () {

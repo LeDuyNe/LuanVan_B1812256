@@ -86,7 +86,6 @@ class AuthController extends AbstractApiController
 
         if ($user) {
             $user = User::where('id', auth()->user()->id)->get();
-            // $this->setData(new UserResource(User::whereId(auth()->user()->id));
             $this->setData(UserResource::collection($user));
             $this->setStatus('200');
             $this->setMessage("Update information of user successfully.");
