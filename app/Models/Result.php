@@ -17,8 +17,9 @@ class Result extends Model
     protected $fillable = [
         'numCorrect',
         'restTime',
+        'note',
         'examineeId',
-        'questionBankId',
+        'examId',
       ];
 
       protected $casts = [

@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [ExamController::class, 'getExams'])->name("exam.getExams");
             Route::get('/{id}', [ExamController::class, 'getDetailExam'])->name("exam.getDetailExam");
             Route::post('/create', [ExamController::class, 'createExam'])->name("exam.createExam");
+            Route::patch('/remake/{id}', [ExamController::class, 'remakeExam'])->name("exam.remakeExam");
             Route::put('/active/{id}', [ExamController::class, 'activeExam'])->name("exam.activeExam");
             Route::patch('/update/{id}', [ExamController::class, 'updateExam'])->name("exam.updateExam");
             Route::delete('/delete/{id}', [ExamController::class, 'deleteExam'])->name("exam.deleteExam");

@@ -38,19 +38,30 @@ class ExamRequests extends FormRequest
                     'timeStart' => ['required', 'integer'],
                     'countLimit' => ['required', 'integer'],
                     'note' => ['string', 'nullable'],
-                    'numExams' => ['nullable','integer'],
+                    'numExams' => ['nullable', 'integer'],
                     'isPublished' => ['boolean', 'nullable'],
+                ];
+                break;
+            case 'exam.remakeExam':
+                return [
+                    'id' => ['required', 'string', 'exists:exams,id'],
+                    'structureExam' => ['required', 'array'],
+                ];
+                break;
+            case 'exam.updateExam':
+                return [
+                    'id' => ['required', 'string', 'exists:exams,id'],
+                    'name' => ['nullable', 'string'],
+                    'timeDuration' => ['nullable', 'integer'],
+                    'timeStart' => ['nullable', 'integer'],
+                    'countLimit' => ['nullable', 'integer'],
+                    'note' => ['nullable', 'nullable'],
+                    'isPublished' => ['nullable', 'boolean'],
                 ];
                 break;
             case 'exam.activeExam':
                 return [
                     'id' => ['required', 'string', 'exists:exams,id'],
-                ];
-                break;
-            case 'exam.updateExam':
-                return [
-                    // 'id' => ['required', 'string', 'exists:categories,id'],
-                    // 'name' => 'string|required',
                 ];
                 break;
             case 'exam.deleteExam':

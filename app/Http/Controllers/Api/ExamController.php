@@ -207,27 +207,77 @@ class ExamController extends AbstractApiController
         return $this->respond();
     }
 
-
-    public function updateCategory(ExamRequests $request)
+    public function remakeExam(ExamRequests $request)
     {
-        // $validated_request = $request->validated();
-        // $name_category = Str::lower($validated_request['name']);
-        // $userId = auth()->id();
+        $validated_request = $request->validated();
 
-        // $checkCategory = Category::where(['creatorId' => $userId, 'name' => $name_category])->first();
+        $examId = $validated_request['id'];
+        $structureExam = $validated_request['structureExam'];
+        $questionBankId = Exams::where('id', $examId)->pluck('questionBankId')->toArray();
+        $resultsId = Result::where('examId', $examId)->pluck('id')->toArray();
 
-        // if (!$checkCategory) {
-        //     $category = Category::where('id', $validated_request['id'])->update($request->all());
+        if ($resultsId) {
+            $this->setStatus('400');
+            $this->setMessage("Failed, the exam has results of user");
+        } else {
+            $numEasy = $structureExam['easy'];
+            $numNormal = $structureExam['normal'];
+            $numDifficult = $structureExam['difficult'];
+            $esay = 1;
+            $normal = 2;
+            $difficult = 3;
+            $arrayQuestionsEasy = $this->getQuestionsId($questionBankId[0], $esay);
+            $arrayQuestionsNormal = $this->getQuestionsId($questionBankId[0], $normal);
+            $arrayQuestionsDifficult = $this->getQuestionsId($questionBankId[0], $difficult);
 
-        //     $this->setStatus('200');
-        //     $this->setMessage("Update category successfully.");
+            $randomQuestionEeasy = $this->randomQuestion($arrayQuestionsEasy, $numEasy);
+            $randomQuestionNormal = $this->randomQuestion($arrayQuestionsNormal, $numNormal);
+            $randomQuestionDifficult = $this->randomQuestion($arrayQuestionsDifficult, $numDifficult);
 
-        //     return $this->respond();
-        // }
-        // $this->setStatus('400');
-        // $this->setMessage("Category is existed");
+            $arrayQuestionsId = [];
+            if (is_array($randomQuestionEeasy) == true) {
+                foreach ($randomQuestionEeasy as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsEasy[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsEasy[$randomQuestionEeasy]);
+            }
 
-        // return $this->respond();
+            if (is_array($randomQuestionNormal) == true) {
+                foreach ($randomQuestionNormal as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsNormal[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsNormal[$randomQuestionNormal]);
+            }
+
+            if (is_array($randomQuestionDifficult) == true) {
+                foreach ($randomQuestionDifficult as $question) {
+                    array_push($arrayQuestionsId, $arrayQuestionsDifficult[$question]);
+                }
+            } else {
+                array_push($arrayQuestionsId, $arrayQuestionsDifficult[$randomQuestionDifficult]);
+            }
+
+            $status = Exams::where('id', $examId)->update([
+                'arrayQuestion' => json_encode($arrayQuestionsId),
+            ]);
+
+            if ($status) {
+                $exam =  Exams::where('id', $examId)->get();
+                $this->setData(ExamResource::collection($exam));
+                $this->setStatus('200');
+                $this->setMessage("Remake exam is successfully !");
+            } else {
+                $this->setStatus('400');
+                $this->setMessage("Remake exam is fail !");
+            }
+        }
+        return $this->respond();
+    }
+
+    public function updateExam(ExamRequests $request)
+    {
     }
 
     public function deleteExam(ExamRequests $request)
@@ -237,7 +287,7 @@ class ExamController extends AbstractApiController
         $examId = $validated_request['id'];
         $exam = Exams::FindOrFail($examId);
 
-        $resultId = Result::where(['emxamId' =>  $examId])->pluck('id')->toArray();
+        $resultId = Result::where(['examId' =>  $examId])->pluck('id')->toArray();
 
         if ($resultId) {
             $this->setStatus('400');
