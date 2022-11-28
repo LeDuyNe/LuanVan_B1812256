@@ -14,18 +14,13 @@ class CreateTableQuestionsTable extends Migration
     public function up()
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('quizID')->unsigned();
-            $table->string('question');
-            $table->string('choice1');
-            $table->string('choice2');
-            $table->string('choice3');
-            $table->string('choice4');
-            $table->string('answer');
+            $table->uuid('id')->primary();
+            $table->longText('content');
+            $table->integer('level');
+            $table->string('topQuestionsId')->nullable();
+            $table->string('bottomQuestionsId')->nullable();
 
             $table->timestamps();
-            
-            $table->foreign('quizID')->references('id')->on('examinfos')->onDelete('cascade');
         });
     }
 
