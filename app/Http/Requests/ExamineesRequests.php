@@ -31,20 +31,20 @@ class ExamineesRequests extends FormRequest
         switch ($name) {
             case 'examinees.getExam':
                 return [
-                    'id' => ['required', 'integer', 'exists:questionbank,numExamination'],
+                    'id' => ['required', 'integer', 'exists:exams,numExamination'],
                 ];
                 break;
             case 'examinees.getDetailResult':
                 return [
-                        'id' => ['required', 'string', 'exists:result,id'],
+                    'id' => ['required', 'string', 'exists:result,id'],
                 ];
-                    break;
+                break;
             case 'examinees.submitExam':
                 return [
-                    'questionBankId' => ['required', 'string', 'exists:questionbank,id'],
+                    'examId' => ['required', 'string', 'exists:exams,id'],
+                    'answerIds' => ['required', 'array'],
                     'restTime' => ['nullable', 'integer'],
                     'note' => ['nullable', 'string'],
-                    'answerIds' => ['required', 'array'],
                 ];
                 break;
             default:

@@ -9,10 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Answer extends Model
+class ChooseAnswer extends Model
 {
     use HasApiTokens, HasFactory, Notifiable, Uuids;
-    protected $table = 'answer';
+    protected $table = 'choose_answer';
 
     protected $fillable = [
         'answerId',

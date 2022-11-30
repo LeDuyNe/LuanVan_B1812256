@@ -278,6 +278,29 @@ class ExamController extends AbstractApiController
 
     public function updateExam(ExamRequests $request)
     {
+        $validated_request = $request->validated();
+        $emxamId = $validated_request['id'];
+        $creatorId = auth()->id();
+
+
+        $exam = Exams::where('id', $emxamId)->where('creatorId', $creatorId)->update($request->all());
+        if (!empty($validated_request['timeStart'])) {
+            $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
+            $exam = Exams::where('id', $emxamId)->update([
+                "timeStart" => $timeStart
+            ]);
+        }
+ 
+        if($exam){
+            $this->setData(new ExamResource(Exams::findOrFail($emxamId)));
+            $this->setStatus('200');
+            $this->setMessage("Update exam is successfully !");
+        }else{
+            $this->setStatus('200');
+            $this->setMessage("Update exam is failed !");
+        }
+
+        return $this->respond();
     }
 
     public function deleteExam(ExamRequests $request)
@@ -341,15 +364,3 @@ class ExamController extends AbstractApiController
         return $randomElement;
     }
 }
-
-        // $timeStart = Carbon::createFromTimestamp($validated_request['timeStart'])->toDateTimeString();
-                    // if (!empty($validated_request['timeStart'])) {
-                    //     $questionBank = QuestionBank::where('id', $questionBankId)->update([
-                    //         "timeStart" => $timeStart
-                    //     ]);
-                    // }
-                    // if (!empty($validated_request['timeStart'])) {
-                    //     $questionBank = QuestionBank::where('id', $questionBankId)->update([
-                    //         "timeStart" => $timeStart
-                    //     ]);
-                    // }
